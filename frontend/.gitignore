@@ -1,0 +1,19 @@
+# secrets: never commit
+.env
+.env.*
+!.env.example
+
+# dependencies and build output
+node_modules/
+dist/
+.vite/
+
+# logs, caches, OS and editor files
+*.log
+npm-debug.log*
+.eslintcache
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
