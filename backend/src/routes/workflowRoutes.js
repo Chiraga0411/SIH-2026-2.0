@@ -1,0 +1,16 @@
+const express = require("express");
+const auth = require("../middleware/auth");
+const roleGuard = require("../middleware/roleGuard");
+const alerts = require("../controllers/alertController");
+const services = require("../controllers/serviceController");
+const audit = require("../controllers/auditController");
+const router = express.Router();
+router.get("/alerts", auth, roleGuard("officer", "planner", "registrar", "admin"), alerts.getAlerts);
+router.get("/audit-log", auth, roleGuard("admin", "officer", "registrar", "planner"), audit.getAuditLog);
+router.get("/services", auth, services.listServices);
+router.get("/services/:id", auth, services.getServiceResult);
+router.post("/service-requests", auth, services.createServiceRequest);
+router.get("/service-requests", auth, services.listServiceRequests);
+router.patch("/service-requests/:id", auth, roleGuard("officer", "admin", "registrar", "planner"), services.updateServiceRequest);
+router.get("/service-requests/:id/certificate", auth, services.getCertificate);
+module.exports = router;

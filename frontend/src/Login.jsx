@@ -1,5 +1,6 @@
 import {useState,useRef} from 'react';
 import './Login.css';
+import {loginCitizen,loginOfficial} from './api.js';
 
 /* ---------- text (English / Hindi) ---------- */
 const TXT={
@@ -35,8 +36,8 @@ hi:{badge:'राष्ट्रीय भूमि अभिलेख प्र
 export const DEMO_OTP='123456',DEMO_PWD='demo123';
 const DEPTS=[
  {k:'REV',dn:'Revenue & Land Records',who:'Vikram Singh \u00B7 Circle Officer, Basopatti',id:'REV-001',name:'Vikram Singh',role:'officer',view:'office'},
- {k:'REG',dn:'Registration Department',who:'Sunita Devi \u00B7 Sub-Registrar',id:'REG-001',name:'Sunita Devi',role:'officer',view:'reg'},
- {k:'PLN',dn:'Urban Planning',who:'Meera Singh \u00B7 Planner',id:'PLN-001',name:'Meera Singh',role:'officer',view:'plan'},
+	 {k:'REG',dn:'Registration Department',who:'Sunita Devi \u00B7 Sub-Registrar',id:'REG-001',name:'Sunita Devi',role:'registrar',view:'reg'},
+	 {k:'PLN',dn:'Urban Planning',who:'Meera Singh \u00B7 Planner',id:'PLN-001',name:'Meera Singh',role:'planner',view:'plan'},
  {k:'ADM',dn:'IT & System Administration',who:'Ops Admin',id:'ADM-001',name:'Ops Admin',role:'admin',view:'adm'}
 ];
 
@@ -71,14 +72,16 @@ export function Login({u,lang:extLang,setLang:extSet}){
     if(!phoneOk){setErr(t.badPhone);return}
     setErr('');setStep('otp');
   };
-  const verify=()=>{
-    if(otp!==DEMO_OTP){setErr(t.badOtp);return}
-    enter('citizen','map',mode==='signup'?fname.trim():'Ramesh Kumar');
-  };
-  const deptLogin=()=>{
-    if(emp.trim().toUpperCase()!==dept.id||pwd!==DEMO_PWD){setErr(t.badCred);return}
-    enter(dept.role,dept.view,dept.name);
-  };
+	const verify=async()=>{
+	    if(otp!==DEMO_OTP){setErr(t.badOtp);return}
+	    try { const result=await loginCitizen({phone,otp,name:mode==='signup'?fname.trim():'Ramesh Kumar'}); sessionStorage.setItem('landstack_token',result.token); enter('citizen','map',result.user?.name||'Ramesh Kumar'); }
+	    catch { enter('citizen','map',mode==='signup'?fname.trim():'Ramesh Kumar'); }
+	  };
+	  const deptLogin=async()=>{
+	    if(emp.trim().toUpperCase()!==dept.id||pwd!==DEMO_PWD){setErr(t.badCred);return}
+	    try { const result=await loginOfficial({employeeId:emp,password:pwd}); sessionStorage.setItem('landstack_token',result.token); const role=result.user?.role||dept.role; enter(role,role==='registrar'?'reg':role==='planner'?'plan':dept.view,result.user?.name||dept.name); }
+	    catch { enter(dept.role,dept.view,dept.name); }
+	  };
   const pickDept=k=>{setDk(k);setEmp(DEPTS.find(d=>d.k===k).id);setPwd('');setErr('')};
 
   const onDigit=(i,e)=>{

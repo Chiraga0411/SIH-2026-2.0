@@ -38,7 +38,7 @@ function generateToken(user) {
       role: user.role,
       name: user.name
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || "landstack-development-secret",
     {
       expiresIn: "1d"
     }

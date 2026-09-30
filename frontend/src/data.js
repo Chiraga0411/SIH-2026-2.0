@@ -173,6 +173,12 @@ export const NAV = {
         ['profile', 'My profile'],
         ['chat', 'Assistant']
     ],
+    registrar: [
+        ['reg', 'Registrar desk'], ['map', 'Map'], ['services', 'Land services'], ['profile', 'My profile'], ['chat', 'Assistant']
+    ],
+    planner: [
+        ['plan', 'Change alerts'], ['map', 'Map'], ['services', 'Land services'], ['profile', 'My profile'], ['chat', 'Assistant']
+    ],
     admin: [
         ['adm', 'Overview'],
         ['users', 'Users & roles'],
