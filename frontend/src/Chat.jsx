@@ -1,3 +1,4 @@
+import {askAssistant} from './api.js';
 import {useEffect,useRef,useState} from 'react';
 import {Badge,Chip,Btn,Head,vd} from './ui.jsx';
 import {SUG} from './data.js';

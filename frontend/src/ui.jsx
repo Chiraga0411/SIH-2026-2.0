@@ -1,3 +1,4 @@
+import {useState as _us,useEffect as _ue} from 'react';
 export const vd=t=>t>=75?['ok','Verified']:t>=50?['wa','Needs review']:['no','Conflict'];
 export const Badge=({k='nu',children})=><span className={`badge ${k}`}>{children}</span>;
 export const Chip=({on,...p})=><button className={'chip'+(on?' on':'')} {...p}/>;
@@ -9,3 +10,9 @@ export function Gauge({t}){const c=t>=75?'#16A34A':t>=50?'#F59E0B':'#DC2626',r=4
 export const Table=({cols,rows})=>(<div className="card scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{rows.map((r,i)=><tr key={i}>{r.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div>);
 export const Kpis=({items})=>(<div className="kpis">{items.map(([l,n,c,i])=><div key={l} className="card kpi"><i style={{background:c}}>{i}</i><div><b>{n}</b><br/><span>{l}</span></div></div>)}</div>);
 export const Li=({children})=><div className="li">{children}</div>;
+
+export const Loading=({children='Loading...'})=><div className="card empty" role="status" aria-live="polite">{children}</div>;
+export const ErrorState=({msg,retry})=><div className="card empty" role="alert">{msg||'Something went wrong.'}{retry&&<div className="mt"><button className="btn s" onClick={retry}>Try again</button></div>}</div>;
+export function useAsync(fn,deps=[]){const[s,set]=_us({loading:true}),[n,setN]=_ue&&_us(0);
+  _ue(()=>{let on=true;set({loading:true});Promise.resolve().then(fn).then(d=>on&&set({data:d}),e=>on&&set({err:e.message||'Request failed'}));return()=>{on=false}},[...deps,n]);
+  return {...s,retry:()=>setN(x=>x+1)}}

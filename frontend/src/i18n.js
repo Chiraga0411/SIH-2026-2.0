@@ -1,3 +1,6 @@
+import EN_KEYS from './i18n/en.json';
+import HI_KEYS from './i18n/hi.json';
+import TA_KEYS from './i18n/ta.json';
 import './lang.css';
 
 /* English -> Hindi dictionary. Key = exact English text shown in the app.
@@ -198,7 +201,7 @@ export const HI = {
     'Queue is clear.': 'कतार खाली है।',
     'Claim verified': 'दावा सत्यापित',
     'Claim rejected': 'दावा अस्वीकृत',
-    'Name mismatch: RoR says "Ramesh Kumar"': 'नाम असंगति: RoR में "Ramesh Kumar" है',
+    'Name mismatch: RoR says "Demo Owner"': 'नाम असंगति: RoR में "Demo Owner" है',
     'Documents match RoR': 'दस्तावेज़ RoR से मेल खाते हैं',
     'Planner desk': 'योजनाकार डेस्क',
     'Satellite shows suspected changes. An officer confirms every one.': 'सैटेलाइट संदिग्ध बदलाव दिखाता है। हर एक की पुष्टि अधिकारी करते हैं।',
@@ -364,7 +367,11 @@ export const HI = {
     'Khasra 312/2, Bawadia Kalan': 'खसरा 312/2, बावड़िया कलां'
 };
 
+const TA = {
+ 'Map':'வரைபடம்','Map & Search':'வரைபடம் மற்றும் தேடல்','My Land':'என் நிலம்','My properties':'என் சொத்துகள்','Claim plot':'நிலத்தை கோரவும்','Services':'சேவைகள்','Buy & Sell':'வாங்குதல் மற்றும் விற்பனை','Dues & Alerts':'நிலுவைகள் மற்றும் எச்சரிக்கைகள்','Assistant':'உதவியாளர்','Overview':'மேலோட்டம்','Users & roles':'பயனர்கள் மற்றும் பாத்திரங்கள்','State config':'மாநில அமைப்பு','Audit log':'தணிக்கை பதிவு','Audit & Security':'தணிக்கை மற்றும் பாதுகாப்பு','Log out':'வெளியேறு','Land officer':'நில அலுவலர்','System admin':'கணினி நிர்வாகி','Map':'வரைபடம்','Total parcels':'மொத்த நிலப்பகுதிகள்','Verified':'சரிபார்க்கப்பட்டது','Needs review':'மதிப்பாய்வு தேவை','Potential conflicts':'சாத்தியமான முரண்பாடுகள்','Pending claims':'நிலுவை கோரிக்கைகள்','Layers':'அடுக்குகள்','Satellite':'செயற்கைக்கோள்','Terrain':'நிலப்பரப்பு','Land parcel':'நிலப்பகுதி','Close':'மூடு','Request full report':'முழு அறிக்கையை கோரவும்','List for sale':'விற்பனைக்கு பட்டியலிடவும்','Privacy':'தனியுரிமை','Consent inbox':'ஒப்புதல் பெட்டி','Buy':'வாங்கு','Payments':'கொடுப்பனவுகள்','Reminders':'நினைவூட்டல்கள்','Notifications':'அறிவிப்புகள்','Claim queue':'கோரிக்கை வரிசை','Registrar desk':'பதிவாளர் மேசை','Change alerts':'மாற்ற எச்சரிக்கைகள்','Data quality':'தரத் தரவு','Record status':'பதிவு நிலை','Owner':'உரிமையாளர்','Area':'பரப்பளவு','Land use':'நிலப் பயன்பாடு','Zoning':'மண்டல வகை','Price':'விலை','For sale':'விற்பனைக்கு','Mortgaged':'அடமானம்','Disputed':'சர்ச்சைக்குரியது','Residential':'குடியிருப்பு','Commercial':'வணிகம்','No dues':'நிலுவை இல்லை','Pending':'நிலுவை','Rejected':'நிராகரிக்கப்பட்டது','Approved':'அங்கீகரிக்கப்பட்டது','Send':'அனுப்பு','Back':'பின்','Continue':'தொடர்க','Save':'சேமி','Cancel':'ரத்து செய்','Close panel':'பலகத்தை மூடு','Loading...':'ஏற்றுகிறது...','No notifications yet.':'அறிவிப்புகள் இல்லை.','No verified plots yet.':'சரிபார்க்கப்பட்ட நிலங்கள் இல்லை.'
+};
 /* ---------- runtime translator: swaps text in the DOM, remembers the English original ---------- */
+export const t=(key,lang=LANG)=>{const dict=lang==='hi'?HI_KEYS:lang==='ta'?TA_KEYS:null;return dict?.[key]||key};
 const norm = s => s.replace(/\s+/g, ' ').trim();
 const ATTRS = ['placeholder', 'aria-label', 'title'];
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TEXTAREA']);
@@ -381,8 +388,9 @@ function tText(n) {
         r = { orig: cur, shown: cur };
         texts.set(n, r)
     } // React wrote new English text
-    const hi = LANG === 'hi' ? HI[norm(r.orig)] : undefined;
-    const want = hi ? r.orig.match(/^\s*/)[0] + hi + r.orig.match(/\s*$/)[0] : r.orig;
+    const dict = LANG === 'hi' ? HI_KEYS : LANG === 'ta' ? TA_KEYS : null;
+    const translated = dict?.[norm(r.orig)];
+    const want = translated ? r.orig.match(/^\s*/)[0] + translated + r.orig.match(/\s*$/)[0] : r.orig;
     if (cur !== want) n.nodeValue = want;
     r.shown = want;
 }
@@ -401,8 +409,8 @@ function tAttr(el) {
             r = { orig: cur, shown: cur };
             m[a] = r
         }
-        const hi = LANG === 'hi' ? HI[norm(r.orig)] : undefined,
-            want = hi || r.orig;
+        const dict = LANG === 'hi' ? HI : LANG === 'ta' ? TA : null,
+            want = dict?.[norm(r.orig)] || r.orig;
         if (cur !== want) el.setAttribute(a, want);
         r.shown = want;
     }
@@ -428,9 +436,9 @@ export function initTranslator() {
     walk(root);
 }
 export function applyLang(l) {
-    LANG = l === 'hi' ? 'hi' : 'en';
+    LANG = ['hi','ta'].includes(l) ? l : 'en';
     document.documentElement.lang = LANG;
     if (root) walk(root);
 }
-export const readLang = () => { try { return localStorage.getItem('ls-lang') === 'hi' ? 'hi' : 'en' } catch { return 'en' } };
+export const readLang = () => { try { return ['hi','ta'].includes(localStorage.getItem('ls-lang')) ? localStorage.getItem('ls-lang') : 'en' } catch { return 'en' } };
 export const saveLang = l => { try { localStorage.setItem('ls-lang', l) } catch {} };

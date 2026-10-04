@@ -1,3 +1,4 @@
+import {dues,payDue,isDemoMode} from './api.js';
 import {useState} from 'react';
 import {Badge,Btn,Head,Empty,Li} from './ui.jsx';
 import {rec} from './records.js';
@@ -29,10 +30,10 @@ export function Family({S,u,toast}){
 export function Pay({S,u,toast}){
   const P=S.parcels.filter(x=>stOf(x)===S.st),[pid,setPid]=useState(P[0]?.id),[sel,setSel]=useState(null),[upi,setUpi]=useState(''),[step,setStep]=useState('form'),[err,setErr]=useState('');
   const paid=new Set(S.pays.map(x=>x.ref)),p=P.find(x=>x.id===+pid),items=[];
-  p&&taxAmt(p)&&!paid.has('TAX-'+p.u)&&items.push({ref:'TAX-'+p.u,label:'Property tax',amt:taxAmt(p),u:p.u});
+  if(S.dues?.length)S.dues.filter(d=>d.status==='DUE').forEach(d=>items.push({id:d.id,ref:d.id,label:d.label,amt:d.amount,u:d.ulpin}));
+  else p&&taxAmt(p)&&!paid.has('TAX-'+p.u)&&items.push({ref:'TAX-'+p.u,label:'Property tax',amt:taxAmt(p),u:p.u});
   S.apps.forEach(a=>{const f=FEE[a.id.split('-')[0]];f&&!paid.has(a.id)&&items.push({ref:a.id,label:a.s+' fee',amt:f,u:a.u})});
-  const pay=()=>{if(!/^[\w.-]{2,}@[a-z]{2,}$/i.test(upi))return setErr('Enter a valid UPI ID, e.g. name@bank.');setErr('');setStep('pending');
-    setTimeout(()=>{const r={id:'RCPT-'+Date.now().toString().slice(-7),txn:'UPI'+Math.floor(1e9+Math.random()*9e9),ref:sel.ref,label:sel.label,amt:sel.amt,u:sel.u,upi,at:new Date().toLocaleString('en-IN')};u(s=>({pays:[r,...s.pays]}));setStep('done');toast('Payment received')},1800)};
+  const pay=async()=>{if(!/^[\w.-]{2,}@[a-z]{2,}$/i.test(upi))return setErr('Enter a valid UPI ID, e.g. name@bank.');setErr('');setStep('pending');try{const out=!isDemoMode()&&sel.id?await payDue(sel.id):null;const r={id:out?.receiptNo||'RCPT-'+Date.now().toString().slice(-7),txn:'UPI'+Math.floor(1e9+Math.random()*9e9),ref:sel.ref,label:sel.label,amt:out?.amount||sel.amt,u:sel.u,upi,at:new Date().toLocaleString('en-IN')};u(s=>({pays:[r,...s.pays],dues:(s.dues||[]).filter(d=>d.id!==sel.id)}));setStep('done');toast('Payment received')}catch(e){setStep('form');setErr(e.message)}};
   const last=S.pays[0];
   return <><Head eb="Payments" title="Pay dues and fees" sub="Property tax and service fees by UPI. Receipts are issued instantly."/>
     <div className="grid"><div className="card"><label htmlFor="pp">Check property tax for</label><select id="pp" value={pid} onChange={e=>{setPid(e.target.value);setSel(null);setStep('form')}}>{P.map(x=><option key={x.id} value={x.id}>{x.u} · {x.n}</option>)}</select>
@@ -46,10 +47,9 @@ export function Remind({S}){
   const mine=S.parcels.filter(p=>S.mine.includes(p.id)),paid=new Set(S.pays.map(x=>x.ref)),L=[];
   S.apps.forEach(a=>{if(a.stage<3)L.push({k:'SLA',t:a.at+a.max*DAY,title:a.s+' due',sub:a.id+' · '+a.u});const f=FEE[a.id.split('-')[0]];if(f&&!paid.has(a.id))L.push({k:'Fee',t:a.at+7*DAY,title:'Pay '+a.s+' fee',sub:inr(f)+' · '+a.id})});
   mine.forEach(p=>{if(taxAmt(p)&&!paid.has('TAX-'+p.u))L.push({k:'Tax',t:TAXDUE,title:'Property tax due',sub:inr(taxAmt(p))+' · '+p.u});const m=rec(p).mortgages[0];if(m)L.push({k:'Mortgage',t:TAXDUE+15*DAY,title:'Follow up mortgage release',sub:m.bank+' · '+p.u})});
-  !L.some(x=>x.k==='Tax')&&L.push({k:'Tax',t:TAXDUE,title:'Property tax due',sub:inr(18400)+' · CH-0533-2211',sample:1});
-  !L.some(x=>x.k==='Mortgage')&&L.push({k:'Mortgage',t:TAXDUE+15*DAY,title:'Follow up mortgage release',sub:'State Bank of India · CH-0421-9102',sample:1});
+  (S.dues||[]).filter(d=>d.status==='DUE').forEach(d=>L.push({k:'Tax',t:d.dueDate?new Date(d.dueDate).getTime():TAXDUE,title:d.label||'Property tax due',sub:inr(d.amount)+' · '+d.ulpin}));
   L.sort((a,b)=>a.t-b.t);const ch=[['app','In-app'],['sms','SMS'],['wa','WhatsApp']].filter(([k])=>S.nprefs[k]).map(x=>x[1]).join(', ')||'none';
   const ics=x=>{const d=new Date(x.t).toISOString().slice(0,10).replace(/-/g,'');return 'data:text/calendar;charset=utf-8,'+encodeURIComponent(`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:${x.title}-${d}@landstack\r\nDTSTAMP:${d}T000000Z\r\nDTSTART;VALUE=DATE:${d}\r\nSUMMARY:${x.title}\r\nDESCRIPTION:${x.sub}\r\nEND:VEVENT\r\nEND:VCALENDAR`)};
   return <><Head eb="Deadlines" title="Reminders" sub="SLA dates, tax due dates, fees and mortgage release in one list."/>
     <div className="card"><div className="mut small" style={{marginBottom:8}}>Reminders go to: {ch} (simulated). Change channels in Notifications.</div>
-      {L.map((x,i)=>{const d=dl(x.t);return <Li key={i}><span><b>{x.title}</b>{x.sample&&<span className="mut small"> (sample)</span>}<br/><span className="mut small">{x.sub} · {dfmt(x.t)}</span></span><span className="row"><Badge k={d<0?'no':d<=7?'wa':'ok'}>{d<0?`${-d}d overdue`:d===0?'Today':`${d}d left`}</Badge><a className="small" href={ics(x)} download="reminder.ics">Add to calendar</a></span></Li>})}</div></>}
+      {L.map((x,i)=>{const d=dl(x.t);return <Li key={i}><span><b>{x.title}</b><br/><span className="mut small">{x.sub} · {dfmt(x.t)}</span></span><span className="row"><Badge k={d<0?'no':d<=7?'wa':'ok'}>{d<0?`${-d}d overdue`:d===0?'Today':`${d}d left`}</Badge><a className="small" href={ics(x)} download="reminder.ics">Add to calendar</a></span></Li>})}</div></>}

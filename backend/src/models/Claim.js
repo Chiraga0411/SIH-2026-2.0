@@ -27,6 +27,8 @@ const claimSchema = new mongoose.Schema(
 
     reviewedAt: Date,
 
+    note: String,
+
     reviewedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"

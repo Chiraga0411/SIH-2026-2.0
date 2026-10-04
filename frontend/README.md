@@ -1,13 +1,20 @@
 # LandStack
 
-Unified land-record demo (citizen, land officer, admin). One UI, many states (Chandigarh, Madhya Pradesh).
+Unified land-record frontend (citizen, officers, admin). Pilot states: Chandigarh, Tamil Nadu, Madhya Pradesh.
+
+## Run
 
     npm install
-    cp .env.example .env   # add a URL-restricted Mapbox public token
+    cp .env.example .env
     npm run dev
 
-Log in as Ramesh Kumar (citizen), Land officer, or System admin. OTP is a demo value.
+- `VITE_API_BASE` empty: the Vite proxy forwards live `/api` calls to the backend.
+- Set `VITE_DEMO_MOCK=true` only for the offline mock dataset and demo banner.
+- `src/api.js` uses the backend `/api` contract, sends the stored Bearer token on protected calls, and normalizes responses through `src/adapters.js`.
+- `VITE_TRUST_API`: optional trust-score service, `GET {base}/score?ulpin=...`.
 
-Structure: `src/data.js` mock parcels and state; `src/records.js` per-parcel record fields, name matching and trust breakdown; `src/panels.jsx` record status, score breakdown and data-layer explorer; `src/screens.jsx` citizen/officer screens; `src/admin.jsx` admin screens; `src/Chat.jsx` demo assistant (keyword matching, not retrieval); `src/Sat.jsx` placeholder imagery; `src/ui.jsx` shared components.
-
-Trust score: set `VITE_TRUST_API` to call `GET {base}/score?ulpin=...`; otherwise the panel shows a labelled local estimate.
+## Notes
+- Map: MapLibre GL with OSM and Esri World Imagery tiles, no token needed.
+- Imagery thumbnails use real Esri tiles; parcel placement is illustrative.
+- Login OTP is a demo value (123456). Listing and mutation fraud feeds are simulated.
+- Login globe: `src/Globe.jsx` (d3-geo canvas, world-atlas land data, drag to rotate).

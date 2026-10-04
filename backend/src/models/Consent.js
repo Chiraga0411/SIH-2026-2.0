@@ -20,6 +20,12 @@ const consentSchema = new mongoose.Schema(
       required: true
     },
 
+    purpose: {
+      type: String,
+      enum: ["due_diligence", "loan", "legal", "other"],
+      required: true
+    },
+
     status: {
       type: String,
       enum: ["PENDING", "APPROVED", "REJECTED", "EXPIRED"],
@@ -34,5 +40,7 @@ const consentSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+consentSchema.index({ status: 1, expiresAt: 1 });
 
 module.exports = mongoose.model("Consent", consentSchema);

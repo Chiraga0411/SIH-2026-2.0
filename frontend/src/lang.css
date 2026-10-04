@@ -5,8 +5,8 @@
     margin: 14px 0 6px;
     padding: 4px;
     border-radius: 999px;
-    background: rgba(255, 253, 248, .12);
-    border: 1px solid rgba(255, 253, 248, .2);
+    background: rgba(11, 61, 145, .06);
+    border: 1px solid rgba(11, 61, 145, .12);
     width: fit-content
 }
 
@@ -18,20 +18,27 @@
     padding: 6px 12px;
     border-radius: 999px;
     cursor: pointer;
-    opacity: .75
+    opacity: .65;
+    transition: .15s
 }
 
 .lang-toggle button.on {
-    background: var(--saf);
+    background: linear-gradient(135deg, var(--f), var(--f2));
     color: #fff;
-    opacity: 1
+    opacity: 1;
+    box-shadow: 0 3px 12px rgba(11, 61, 145, .22)
 }
 
 .lang-toggle button:hover:not(.on) {
-    opacity: 1
+    opacity: 1;
+    background: rgba(11, 61, 145, .06)
 }
 
 .lang-toggle svg {
     margin: 0 2px 0 8px;
-    opacity: .8
+    opacity: .7
 }
+
+/* Indic-script fallbacks used by the EN / HI / TA language switch. */
+:lang(hi) body, :lang(hi) button, :lang(hi) input, :lang(hi) select, :lang(hi) textarea { font-family: 'Noto Sans Devanagari', var(--b); }
+:lang(ta) body, :lang(ta) button, :lang(ta) input, :lang(ta) select, :lang(ta) textarea { font-family: 'Noto Sans Tamil', var(--b); }

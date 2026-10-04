@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 
 const {
   requestConsent,
-  getConsentInbox,
+  getConsents,
   updateConsent
 } = require("../controllers/consentController");
 
@@ -16,7 +16,7 @@ router.post("/", auth, requestConsent);
 
 
 // Owner sees requests
-router.get("/", auth, getConsentInbox);
+router.get("/", auth, getConsents);
 
 
 // Owner approves/rejects

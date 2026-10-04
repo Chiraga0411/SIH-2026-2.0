@@ -1,3 +1,4 @@
+import {claimsQueue,decideClaim,registrations,decideRegistration,conflicts,isDemoMode} from './api.js';
 import {useState} from 'react';
 import {Badge,Btn,Head,Empty,Li} from './ui.jsx';
 import {rec,ownerOf,sim} from './records.js';
@@ -15,7 +16,7 @@ export function variants(P){const by={};P.forEach(p=>{const k=stOf(p)+'|'+ownerO
 export function Dupes({S,u,toast}){const O=overlaps(S.parcels),V=variants(S.parcels),D=S.dupes,set=(k,v)=>u(s=>({dupes:{...s.dupes,[k]:v}}));
   const inject=k=>u(s=>{const b=s.parcels.find(x=>x.u==='CH-0421-8873')||s.parcels[0],n=s.parcels.length;
     const pts=k==='ov'?b.pts.split(' ').map(q=>{const[x,y]=q.split(',').map(Number);return(x+30)+','+(y+20)}).join(' '):'700,700 760,700 760,760 700,760';
-    return{parcels:[...s.parcels,{id:9000+n,u:'CH-0421-TEST-'+n,n:'Test plot (sandbox)',a:'100 sq yd',z:'R',s:'none',t:70,pr:'1 Cr',o:k==='ov'?'Test Owner':'Ramesh Kumr',pts}]}});
+    return{parcels:[...s.parcels,{id:9000+n,u:'CH-0421-TEST-'+n,n:'Test plot (sandbox)',a:'100 sq yd',z:'R',s:'none',t:70,pr:'1 Cr',o:k==='ov'?'Test Owner':'Sandbox test owner',pts}]}});
   const Act=({k})=>D[k]==='none'?<Badge k="nu">Not a duplicate</Badge>:<span className="row">{D[k]==='flag'?<Badge k="wa">Flagged for cleanup</Badge>:<Btn s onClick={()=>set(k,'flag')}>Flag for cleanup</Btn>}<Btn s v="g" onClick={()=>set(k,'none')}>Not a duplicate</Btn></span>;
   return <><Head eb="Data integrity" title="Duplicates and overlaps" sub="Boundary overlaps and owner-name spelling variants across the register."/>
     {S.sandbox&&<div className="card" style={{marginBottom:12}}><b>Sandbox test data</b><div className="row mt"><Btn s onClick={()=>{inject('ov');toast('Overlapping test plot added')}}>Inject overlapping plot</Btn><Btn s onClick={()=>{inject('nv');toast('Spelling-variant test plot added')}}>Inject name variant</Btn></div></div>}
@@ -38,10 +39,10 @@ export function Quality({S,u}){const P=S.parcels,M=quality(S),n=P.length;
     <div className="card"><h3 className="h19">Cleanup tasks</h3>{M.length?M.map(x=><Li key={x.k}><span><label><input type="checkbox" checked={x.done} onChange={()=>u(s=>({tasks:{...s.tasks,[x.k]:!s.tasks[x.k]}}))}/> <b style={{textDecoration:x.done?'line-through':'none'}}>{x.f}</b></label><br/><span className="mut small mono">{x.u}</span></span><Badge k="nu">{x.dept}</Badge></Li>):<Empty>No cleanup needed.</Empty>}</div></>}
 const cKey=q=>'claim:'+q.u+':'+q.c;
 export function Cases({S,u,toast}){const [tab,setTab]=useState('claims'),[sel,setSel]=useState([]),[open,setOpen]=useState(null),[reason,setReason]=useState(''),[txt,setTxt]=useState(''),[file,setFile]=useState(null),[err,setErr]=useState('');
-  const I=tab==='claims'?S.queue.map(q=>({key:cKey(q),t:q.c,sub:q.u+' · '+q.m,risk:q.r==='high'})):S.regs.map(r=>({key:'reg:'+r.id,t:r.id+' · '+r.u,sub:`${r.b}, ${r.pr}, duty ${r.d}`,risk:r.k==='High'}));
+  const I=tab==='claims'?S.queue.map(q=>({key:cKey(q),id:q.id,t:q.claimantName||q.c||'Claimant',sub:(q.ulpin||q.u)+' · '+(q.note||q.m||''),risk:q.status==='Rejected'||q.r==='high'})):S.regs.map(r=>({key:'reg:'+r.id,id:r.id,t:r.id+' · '+r.u,sub:`${r.b}, ${r.pr}`,risk:r.k==='High'}));
   const tg=k=>setSel(x=>x.includes(k)?x.filter(y=>y!==k):[...x,k]),chosen=I.filter(i=>sel.includes(i.key));
-  const decide=a=>{if(!chosen.length)return setErr('Select at least one case.');if(a==='reject'&&!reason.trim())return setErr('Enter a reason for rejection.');
-    const ok=a==='approve'?chosen.filter(c=>!c.risk):chosen,skip=chosen.length-ok.length,ks=ok.map(c=>c.key);setErr('');
+  const decide=async a=>{if(!chosen.length)return setErr('Select at least one case.');if(a==='reject'&&!reason.trim())return setErr('Enter a reason for rejection.');
+    const ok=a==='approve'?chosen.filter(c=>!c.risk):chosen,skip=chosen.length-ok.length,ks=ok.map(c=>c.key);setErr('');if(!isDemoMode()){try{for(const c of ok){if(tab==='claims')await decideClaim(c.id,a==='approve'?'Verified':'Rejected',reason);else await decideRegistration(c.id,a==='approve'?'APPROVED':'REJECTED')} }catch(e){return setErr(e.message)}}
     u(s=>{const cn={...s.cn},dec=[...s.decided];ks.forEach(k=>{cn[k]=[...(cn[k]||[]),{by:'Officer',text:(a==='approve'?'Approved':'Rejected: '+reason)+' (bulk)',at:tm()}];dec.unshift({key:k,a,at:tm()})});
       return{cn,decided:dec,queue:s.queue.filter(q=>!ks.includes(cKey(q))),regs:s.regs.filter(r=>!ks.includes('reg:'+r.id))}});
     setSel([]);setReason('');toast(`${ks.length} ${a==='approve'?'approved':'rejected'}${skip?`; ${skip} flagged case${skip>1?'s':''} need individual review`:''}`)};

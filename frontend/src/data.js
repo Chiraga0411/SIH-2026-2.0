@@ -100,12 +100,32 @@ export const P = [
     { id: 91, u: 'MP-BPL-310-2', n: 'Khasra 310/2, Shahpura', a: '0.125 ha', z: 'R', s: 'sale', t: 89, pr: '₹2.0 Cr', o: 'I••••a N••••i', st: 'Madhya Pradesh', pts: '150,280 250,280 250,350 150,350' },
     { id: 92, u: 'MP-BPL-311-1', n: 'Khasra 311/1, Hoshangabad Road', a: '0.200 ha', z: 'C', s: 'none', t: 70, pr: '₹5.2 Cr', o: 'O••••r B••••s', st: 'Madhya Pradesh', pts: '260,280 360,280 360,350 260,350' },
     { id: 93, u: 'MP-BPL-312-1', n: 'Khasra 312/1, Bawadia Kalan', a: '0.105 ha', z: 'R', s: 'sale', t: 90, pr: '₹1.5 Cr', o: 'U••••h L••••a', st: 'Madhya Pradesh', pts: '370,280 470,280 470,350 370,350' },
-    { id: 94, u: 'MP-BPL-312-2', n: 'Khasra 312/2, Bawadia Kalan', a: '0.090 ha', z: 'R', s: 'disp', t: 38, pr: '₹1.3 Cr', o: 'W••••y H••••n', st: 'Madhya Pradesh', pts: '480,280 580,280 580,350 480,350' }
+    { id: 94, u: 'MP-BPL-312-2', n: 'Khasra 312/2, Bawadia Kalan', a: '0.090 ha', z: 'R', s: 'disp', t: 38, pr: '₹1.3 Cr', o: 'W••••y H••••n', st: 'Madhya Pradesh', pts: '480,280 580,280 580,350 480,350' },
+    /* Chennai, Tamil Nadu (demo placement; replace with real cadastral GeoJSON) */
+    { id: 95, u: 'TN-CHN-001-1', n: 'Patta 1, T Nagar', a: '2.5 cent', z: 'R', s: 'sale', t: 89, pr: '₹1.8 Cr', o: 'R••••h K••••r', st: 'Tamil Nadu', pts: '40,40 140,40 140,110 40,110' },
+    { id: 96, u: 'TN-CHN-001-2', n: 'Patta 2, T Nagar', a: '3.0 cent', z: 'R', s: 'none', t: 81, pr: '₹2.1 Cr', o: 'S••••a M••••a', st: 'Tamil Nadu', pts: '150,40 250,40 250,110 150,110' },
+    { id: 97, u: 'TN-CHN-002-1', n: 'Patta 3, T Nagar', a: '4.0 cent', z: 'R', s: 'mort', t: 63, pr: '₹2.8 Cr', o: 'A••••l J••••n', st: 'Tamil Nadu', pts: '260,40 360,40 360,110 260,110' },
+    { id: 98, u: 'TN-CHN-002-2', n: 'Patta 4, T Nagar', a: '2.2 cent', z: 'R', s: 'sale', t: 85, pr: '₹1.6 Cr', o: 'P••••a T••••i', st: 'Tamil Nadu', pts: '370,40 470,40 470,110 370,110' },
+    { id: 99, u: 'TN-CHN-003-1', n: 'Patta 5, Adyar', a: '5.5 cent', z: 'R', s: 'disp', t: 31, pr: '₹3.2 Cr', o: 'V••••m S••••h', st: 'Tamil Nadu', pts: '480,40 580,40 580,110 480,110' },
+    { id: 100, u: 'TN-CHN-003-2', n: 'Patta 6, Adyar', a: '3.5 cent', z: 'R', s: 'none', t: 92, pr: '₹2.4 Cr', o: 'N••••a G••••a', st: 'Tamil Nadu', pts: '40,120 140,120 140,190 40,190' },
+    { id: 101, u: 'TN-CHN-004-1', n: 'Patta 7, Adyar', a: '4.0 cent', z: 'R', s: 'sale', t: 90, pr: '₹2.7 Cr', o: 'K••••k D••••e', st: 'Tamil Nadu', pts: '150,120 250,120 250,190 150,190' },
+    { id: 102, u: 'TN-CHN-004-2', n: 'Patta 8, Adyar', a: '3.0 cent', z: 'R', s: 'none', t: 87, pr: '₹2.0 Cr', o: 'M••••m K••••n', st: 'Tamil Nadu', pts: '260,120 360,120 360,190 260,190' },
+    { id: 103, u: 'TN-CHN-005-1', n: 'Shop 1, Anna Nagar', a: '1.5 cent', z: 'C', s: 'sale', t: 78, pr: '₹1.2 Cr', o: 'H••••e T••••s', st: 'Tamil Nadu', pts: '370,120 470,120 470,190 370,190' },
+    { id: 104, u: 'TN-CHN-005-2', n: 'Shop 2, Anna Nagar', a: '1.0 cent', z: 'C', s: 'none', t: 73, pr: '₹95 L', o: 'J••••n E••••s', st: 'Tamil Nadu', pts: '480,120 580,120 580,190 480,190' },
+    { id: 105, u: 'TN-CHN-006-1', n: 'Shop 3, Anna Nagar', a: '2.0 cent', z: 'C', s: 'mort', t: 58, pr: '₹1.5 Cr', o: 'B••••i F••••s', st: 'Tamil Nadu', pts: '40,200 140,200 140,270 40,270' },
+    { id: 106, u: 'TN-CHN-006-2', n: 'Plot 10, Velachery', a: '6.0 cent', z: 'R', s: 'disp', t: 27, pr: '₹3.5 Cr', o: 'L••••a R••••o', st: 'Tamil Nadu', pts: '150,200 250,200 250,270 150,270' },
+    { id: 107, u: 'TN-CHN-007-1', n: 'Plot 11, Velachery', a: '4.5 cent', z: 'R', s: 'sale', t: 84, pr: '₹2.6 Cr', o: 'Q••••y C••••e', st: 'Tamil Nadu', pts: '260,200 360,200 360,270 260,270' },
+    { id: 108, u: 'TN-CHN-007-2', n: 'Plot 12, Velachery', a: '3.5 cent', z: 'R', s: 'none', t: 75, pr: '₹2.2 Cr', o: 'G••••s A••••l', st: 'Tamil Nadu', pts: '370,200 470,200 470,270 370,270' },
+    { id: 109, u: 'TN-CHN-008-1', n: 'Plot 13, OMR', a: '8.0 cent', z: 'R', s: 'sale', t: 91, pr: '₹4.0 Cr', o: 'I••••a N••••i', st: 'Tamil Nadu', pts: '480,200 580,200 580,270 480,270' },
+    { id: 110, u: 'TN-CHN-008-2', n: 'Plot 14, OMR', a: '5.0 cent', z: 'C', s: 'none', t: 70, pr: '₹5.2 Cr', o: 'O••••r B••••s', st: 'Tamil Nadu', pts: '40,280 140,280 140,350 40,350' },
+    { id: 111, u: 'TN-CHN-009-1', n: 'Plot 15, OMR', a: '4.0 cent', z: 'C', s: 'sale', t: 88, pr: '₹4.1 Cr', o: 'U••••h L••••a', st: 'Tamil Nadu', pts: '150,280 250,280 250,350 150,350' },
+    { id: 112, u: 'TN-CHN-009-2', n: 'Plot 16, OMR', a: '3.0 cent', z: 'C', s: 'disp', t: 36, pr: '₹3.1 Cr', o: 'W••••y H••••n', st: 'Tamil Nadu', pts: '260,280 360,280 360,350 260,350' }
 ];
 
 /* Geography per state. Parcels without an 'st' field belong to Chandigarh. */
 export const GEO = {
     Chandigarh: { city: 'Chandigarh', center: [76.7794, 30.7333], view: '0 0 1200 1010', ex: 'CH-0421-8873' },
+    'Tamil Nadu': { city: 'Chennai', center: [80.2707, 13.0827], view: '0 0 620 400', ex: 'TN-CHN-001-1' },
     'Madhya Pradesh': { city: 'Bhopal', center: [77.4126, 23.2599], view: '0 0 620 400', ex: 'MP-BPL-142-3' }
 };
 export const stOf = p => p.st || 'Chandigarh';
@@ -119,7 +139,7 @@ export const CFG = {
             ['area', 'area_sqyd', 'sq yd to sq m'],
             ['zoning', 'land_use', 'R / C codes']
         ],
-        raw: '{ "plot_id": "0421-8873",\n  "owner": "Ramesh Kumar",\n  "area_sqyd": 220,\n  "land_use": "R" }',
+        raw: '{ "plot_id": "0421-8873",\n  "owner": "Demo Owner",\n  "area_sqyd": 220,\n  "land_use": "R" }',
         out: '{ "ulpin": "CH-0421-8873",\n  "owner_name": "R••••h K••••r",\n  "area_sqm": 184,\n  "zoning": "Residential" }'
     },
     'Madhya Pradesh': {
@@ -131,12 +151,22 @@ export const CFG = {
         ],
         raw: '{ "khasra_id": "142/3",\n  "malik_naam": "रमेश कुमार",\n  "rakba_hectare": 0.124,\n  "bhu_upyog": "आवासीय" }',
         out: '{ "ulpin": "MP-BPL-142-3",\n  "owner_name": "R••••h K••••r",\n  "area_sqm": 1240,\n  "zoning": "Residential" }'
+    },
+    'Tamil Nadu': {
+        map: [
+            ['ulpin', 'patta_number', 'Prefix TN-CHN'],
+            ['owner_name', 'eyal_peyar', 'Transliterate, then mask'],
+            ['area', 'vilayam_cent', 'Cent to sq m (1 cent = 40.47 sq m)'],
+            ['zoning', 'bhumi_payanam', 'Tamil label map']
+        ],
+        raw: '{ "patta_number": "001/1",\n  "eyal_peyar": "ரமேஷ் குமார்",\n  "vilayam_cent": 5.5,\n  "bhumi_payanam": "குடியிருப்பு" }',
+        out: '{ "ulpin": "TN-CHN-001-1",\n  "owner_name": "R••••h K••••r",\n  "area_sqm": 222.6,\n  "zoning": "Residential" }'
     }
 };
 export const SUG = ['How risky is buying CH-0421-8873?', 'Why is my listing blocked?', 'Who can see my details?', 'How is Trust Score calculated?'];
 export const AUD = [
     ['10:42', 'Buyer #4821', 'Viewed public fields', 'CH-0421-8873', 'view'],
-    ['10:31', 'Ramesh Kumar', 'Approved full report', 'CH-0421-8873', 'consent'],
+    ['10:31', 'Demo Owner', 'Approved full report', 'CH-0421-8873', 'consent'],
     ['10:12', 'Anita Verma', 'Verified claim', 'CH-0421-8874', 'approval'],
     ['09:58', 'Buyer #5310', 'Requested full report', 'CH-0533-2211', 'consent'],
     ['09:40', 'Deepak Rao', 'Approved registration R-1041', 'CH-0421-9102', 'approval'],
@@ -145,59 +175,71 @@ export const AUD = [
 ];
 export const NAV = {
     citizen: [
-        ['map', 'Map'],
-        ['claim', 'Claim plot'],
-        ['mine', 'My properties'],
-        ['buycheck', 'Before you buy'],
-        ['family', 'Family and heirs'],
-        ['pay', 'Payments'],
-        ['remind', 'Reminders'],
-        ['notes', 'Notifications'],
-        ['services', 'Land services'],
-        ['apps', 'My applications'],
-        ['privacy', 'Privacy'],
-        ['listings', 'Buy'],
-        ['consent', 'Consent inbox'],
-        ['profile', 'My profile'],
-        ['chat', 'Assistant']
+        ['map', 'Map & Search'],
+        ['myland', 'My Land'],
+        ['services', 'Services'],
+        ['buy', 'Buy & Sell'],
+        ['dues', 'Dues & Alerts']
     ],
     officer: [
-        ['office', 'Claim queue'],
-        ['cases', 'Case desk'],
-        ['fraud', 'Fraud alerts'],
-        ['dupes', 'Duplicates'],
-        ['quality', 'Data quality'],
-        ['reg', 'Registrar desk'],
-        ['plan', 'Change alerts'],
-        ['map', 'Map'],
-        ['profile', 'My profile'],
-        ['chat', 'Assistant']
-    ],
-    registrar: [
-        ['reg', 'Registrar desk'], ['map', 'Map'], ['services', 'Land services'], ['profile', 'My profile'], ['chat', 'Assistant']
-    ],
-    planner: [
-        ['plan', 'Change alerts'], ['map', 'Map'], ['services', 'Land services'], ['profile', 'My profile'], ['chat', 'Assistant']
+        ['casedesk', 'Case Desk'],
+        ['alerts', 'Alerts & Conflicts'],
+        ['quality', 'Data Quality'],
+        ['map', 'Map']
     ],
     admin: [
         ['adm', 'Overview'],
-        ['users', 'Users & roles'],
-        ['states', 'State config'],
-        ['audit', 'Audit log'],
-        ['dupes', 'Duplicates'],
-        ['quality', 'Data quality'],
-        ['profile', 'My profile'],
-        ['chat', 'Assistant']
+        ['users', 'Users & Roles'],
+        ['states', 'States & Data'],
+        ['audit', 'Audit & Security']
     ]
 };
+/* Sub-views within each consolidated section */
+export const SECTIONS = {
+    citizen: {
+        myland: { label: 'My Land', tabs: [['mine','My properties'],['claim','Claim plot'],['family','Family & heirs'],['privacy','Privacy'],['consent','Consent inbox']] },
+        services: { label: 'Services', tabs: [['services','Apply'],['apps','My applications']] },
+        buy: { label: 'Buy & Sell', tabs: [['listings','Browse listings'],['buycheck','Before you buy'],['sell','List for sale']] },
+        dues: { label: 'Dues & Alerts', tabs: [['pay','Payments'],['remind','Reminders'],['notes','Notifications']] }
+    },
+    officer: {
+        casedesk: { label: 'Case Desk', tabs: [['office','Claim queue'],['cases','Case desk'],['reg','Registrar desk'],['apps','Applications']] },
+        alerts: { label: 'Alerts & Conflicts', tabs: [['fraud','Fraud alerts'],['conflicts','Conflicts'],['dupes','Duplicates'],['plan','Change alerts']] },
+        quality: { label: 'Data Quality', tabs: [['quality','Quality dashboard'],['dupes','Duplicates & overlaps']] }
+    },
+    admin: {
+        states: { label: 'States & Data', tabs: [['states','State config'],['dupes','Duplicates'],['quality','Data quality'],['import','Data import']] },
+        audit: { label: 'Audit & Security', tabs: [['audit','Audit log'],['rbac','RBAC matrix'],['pii','PII mask preview'],['threats','Threat alerts']] }
+    }
+};
+/* Maps a sub-view to its parent section for nav highlighting */
+export const VIEW_TO_SECTION = {
+    map:'map', myland:'myland', mine:'myland', claim:'myland', family:'myland', privacy:'myland', consent:'myland',
+    services:'services', apps:'services',
+    buy:'buy', listings:'buy', buycheck:'buy', sell:'buy',
+    dues:'dues', pay:'dues', remind:'dues', notes:'dues',
+    casedesk:'casedesk', office:'casedesk', cases:'casedesk', reg:'casedesk',
+    alerts:'alerts', fraud:'alerts', conflicts:'alerts', dupes:'alerts', plan:'alerts',
+    quality:'quality',
+    adm:'adm', users:'users', states:'states', audit:'audit',
+    import:'states', rbac:'audit', pii:'audit', threats:'audit', quality_admin:'states',
+    profile:'profile', chat:'chat'
+};
+/* RBAC permission matrix: which roles can access which views */
+export const RBAC = {
+    citizen: ['map','mine','claim','family','privacy','consent','services','apps','listings','buycheck','sell','pay','remind','notes','profile','chat'],
+    officer: ['office','cases','reg','fraud','conflicts','dupes','quality','plan','map','profile','chat','apps'],
+    admin: ['adm','users','states','audit','dupes','quality','profile','chat','import','rbac','pii','threats']
+};
+export const canAccess=(role,view)=>{const r=RBAC[role];return r&&(r.includes(view)||r.includes(VIEW_TO_SECTION[view]))};
 export const init = () => ({
     role: null,
     view: 'map',
     sel: null,
-    sellId: 1,
-    mine: [1],
-    parcels: P.map(p => ({...p })),
-    vis: { owner: 'Masked', price: 'Public', area: 'Public', zoning: 'Public', mortgage: 'On consent' },
+    sellId: null,
+    mine: [],
+    parcels: [],
+    vis: { owner: 'Masked', phone: 'Hidden', price: 'Public', address: 'On consent' },
     apps: [],
     notes: [],
     prof: {},
@@ -212,27 +254,41 @@ export const init = () => ({
     vlang: 'en-IN',
     fraud: {},
     nprefs: { app: true, sms: true, wa: false },
-    reqs: [{ who: 'Buyer #4821', ulpin: 'CH-0421-8873', left: '23h 12m' }],
+    reqs: [],
     claim: null,
     sold: [],
     cleared: false,
     mort: false,
     ut: 'Residential',
     filt: 'All',
-    queue: [{ c: 'Suresh Kumar', u: 'CH-0421-8873', m: 'Name mismatch: RoR says "Ramesh Kumar"', r: 'high' }, { c: 'Meena Rao', u: 'CH-0533-2211', m: 'Documents match RoR', r: 'low' }],
-    regs: [{ id: 'R-1042', u: 'CH-0421-8873', b: 'Buyer #4821', pr: '₹1.9 Cr', d: '₹13.3 L', k: 'Low' }, { id: 'R-1043', u: 'CH-0533-2211', b: 'Buyer #5310', pr: '₹1.7 Cr', d: '₹11.9 L', k: 'High' }],
+    queue: [],
+    regs: [],
     duty: 120,
-    users: [{ n: 'Ramesh Kumar', p: '+91 98765 43210', r: 'Citizen', a: 1 }, { n: 'Suresh Kumar', p: '+91 91234 56780', r: 'Citizen', a: 1 }, { n: 'Anita Verma', p: '+91 90000 11122', r: 'Officer', a: 1 }, { n: 'Deepak Rao', p: '+91 93333 44455', r: 'Registrar', a: 1 }, { n: 'Meera Singh', p: '+91 94444 55566', r: 'Planner', a: 1 }, { n: 'Ops admin', p: '+91 95555 66677', r: 'Admin', a: 1 }],
+    users: [
+        { n: 'Demo Owner', p: '+91 98765 43210', r: 'Citizen', a: 1 },
+        { n: 'Suresh Kumar', p: '+91 91234 56780', r: 'Citizen', a: 1 },
+        { n: 'Anita Verma', p: '+91 90000 11122', r: 'Officer', a: 1 },
+        { n: 'Deepak Rao', p: '+91 93333 44455', r: 'Registrar', a: 1 },
+        { n: 'Meera Singh', p: '+91 94444 55566', r: 'Planner', a: 1 },
+        { n: 'Karthik Raja', p: '+91 96666 77788', r: 'Tax Officer', a: 1 },
+        { n: 'Lakshmi Devi', p: '+91 97777 88899', r: 'Officer', a: 1 },
+        { n: 'Ops admin', p: '+91 95555 66677', r: 'Admin', a: 1 }
+    ],
     st: 'Chandigarh',
     af: 'All',
     mstyle: 'Satellite',
     zoom: 1,
     tab: 'Overview',
-    layers: { zones: 1, status: 1, roads: 1, bound: 1 },
+    layers: { enc: 1, stale: 1, mis: 1, zones: 1, status: 1, roads: 1, bound: 1, base: 1, essential: 1, additional: 1 },
     lo: true,
     chatOpen: false,
     typing: false,
     msgs: [
         ['b', 'Ask me about any ULPIN. I answer from records and cite sources.']
-    ]
+    ],
+    subView: null,
+    threats: [],
+    importData: null,
+    maskPreview: null
 });
+export const displayName=S=>S.name||({officer:'Land officer',admin:'System admin'}[S.role]||'User');

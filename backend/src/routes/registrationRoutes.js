@@ -21,12 +21,7 @@ router.post(
 
 
 // Registrar sees queue
-router.get(
-  "/",
-  auth,
-  roleGuard("registrar", "admin"),
-  getRegistrationQueue
-);
+router.get("/", auth, getRegistrationQueue); // registrar/admin queue, or ?mine=1 for the buyer
 
 
 // Registrar approves/rejects

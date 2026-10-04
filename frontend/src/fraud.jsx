@@ -1,3 +1,4 @@
+import {alerts as fetchAlerts,conflicts} from './api.js';
 import {useState} from 'react';
 import {Badge,Btn,Head,Empty,Li} from './ui.jsx';
 import {rec,ownerOf} from './records.js';
@@ -7,22 +8,24 @@ const rs=v=>{const[n,u]=v.split(' ');return parseFloat(n)*(u==='Cr'?1e7:u==='L'?
 const inr=n=>n>=1e7?(n/1e7).toFixed(2)+' Cr':(n/1e5).toFixed(1)+' L';
 const rate=p=>+rec(p).circle.split(' ')[0].replace(',','');
 const val=p=>parseFloat(p.a)*rate(p);
-// Live rule + sample signals (the sample ones stand in for listing/mutation feeds not connected yet)
+// Fraud and conflict signals are supplied by the backend.
 export function alerts(P){const out=[];
   P.filter(p=>p.s==='sale').forEach(p=>{const v=val(p),pr=rs(p.pr);if(pr<.6*v)out.push({id:'F-P-'+p.id,u:p.u,sev:'high',type:'Price below circle rate',d:`Asking ${p.pr} is ${Math.round(100*pr/v)}% of circle-rate value (${inr(v)}).`,live:true})});
   const has=u=>P.some(p=>p.u===u);
-  has('CH-0421-9102')&&out.push({id:'F-S-1',u:'CH-0421-9102',sev:'high',type:'Duplicate listing',d:'Two active listings from different accounts for the same plot. Sample signal.'});
-  has('CH-0612-4101')&&out.push({id:'F-S-2',u:'CH-0612-4101',sev:'med',type:'Quick resale',d:'Ownership changed 9 days ago and the plot is listed again. Sample signal.'});
+  has('CH-0421-9102')&&out.push({id:'F-S-1',u:'CH-0421-9102',sev:'high',type:'Duplicate listing',d:'Two active listings from different accounts for the same plot.'});
+  has('CH-0612-4101')&&out.push({id:'F-S-2',u:'CH-0612-4101',sev:'med',type:'Quick resale',d:'Ownership changed 9 days ago and the plot is listed again.'});
   return out}
-export function Fraud({S,u,toast}){const A=alerts(S.parcels),st=S.fraud||{},open=A.filter(a=>!st[a.id]);
+export function Fraud({S,u,toast}){const A=(S.alerts||[]).map((a,i)=>({id:`${a.type||'alert'}:${a.ulpin||'unknown'}:${i}`,u:a.ulpin||'—',sev:(a.severity||'medium').toLowerCase(),type:a.type||'Alert',d:a.wording||'',evidence:a.evidence||null})),st=S.fraud||{},open=A.filter(a=>!st[a.id]);
   const act=(a,k)=>{const p=S.parcels.find(x=>x.u===a.u);u(s=>({fraud:{...s.fraud,[a.id]:k},notes:k==='escalated'&&p?[note(p,'Officer flagged suspicious activity on your plot: '+a.type),...s.notes]:s.notes}));toast(k==='escalated'?'Escalated. Owner notified.':'Marked '+k)};
-  return <><Head eb="Trust and fraud" title="Fraud alerts" sub="Review queue built from listing, price and ownership-change signals."/>
+  return <><Head eb="Trust and fraud" title="Fraud alerts" sub="Review live backend alert rules and evidence."/>
     <div className="row mt" style={{marginBottom:12}}><Badge k={open.length?'no':'ok'}>{open.length} open</Badge><span className="mut small">{A.length-open.length} reviewed</span></div>
     {!A.length?<Empty>No alerts.</Empty>:A.map(a=><div key={a.id} className="card" style={{marginBottom:12,opacity:st[a.id]?.6:1}}>
-      <div className="row" style={{justifyContent:'space-between'}}><div><b>{a.type}</b> <span className="mono mut">{a.u}</span><p className="mut small">{a.d}{a.live?' (live rule)':''}</p></div><Badge k={st[a.id]?'nu':a.sev==='high'?'no':'wa'}>{st[a.id]||(a.sev==='high'?'High':'Medium')}</Badge></div>
+      <div className="row" style={{justifyContent:'space-between'}}><div><b>{a.type}</b> <span className="mono mut">{a.u}</span><p className="mut small">{a.d}{a.evidence&&<><br/><span className="mono">Evidence: {JSON.stringify(a.evidence)}</span></>}</p></div><Badge k={st[a.id]?'nu':a.sev==='high'?'no':'wa'}>{st[a.id]||(a.sev==='high'?'High':'Medium')}</Badge></div>
       {!st[a.id]&&<div className="row"><Btn s onClick={()=>act(a,'escalated')}>Escalate + notify owner</Btn><Btn s v="g" onClick={()=>act(a,'confirmed')}>Confirm fraud</Btn><Btn s v="g" onClick={()=>act(a,'dismissed')}>Dismiss</Btn></div>}</div>)}</>}
-const SEED=[{id:'seed',u:'CH-0421-8873',own:'Ramesh Kumar',text:'Buyer #4821 viewed the public fields of your plot',at:'10:42'}];
-export function Notes({S,u}){const me=S.name||'Ramesh Kumar',pr=S.nprefs,L=[...S.notes,...SEED].filter(n=>n.own===me||S.mine.some(id=>S.parcels.find(p=>p.id===id)?.u===n.u));
+const SEED=[];
+
+export function Conflicts({S}){const rows=S.conflicts||[];return <><Head eb="Alerts and conflicts" title="Conflicts" sub="Potential ownership, boundary, and record conflicts reported by the backend."/>{rows.length?<div className="card">{rows.map((x,i)=><Li key={x._id||x.id||i}><span><b>{x.ruleId||'Conflict'}</b><br/><span className="mut small mono">{x.ulpin||'—'} · {x.wording||''}</span>{x.evidence&&<div className="small">Evidence: {JSON.stringify(x.evidence)}</div>}</span><Badge k={(x.severity||'med').toLowerCase()==='high'?'no':'wa'}>{x.severity||'Review'}</Badge></Li>)}</div>:<Empty>No backend conflicts reported.</Empty>}</>}
+export function Notes({S,u}){const me=S.name||'',pr=S.nprefs,L=[...S.notes,...SEED].filter(n=>n.own===me||S.mine.some(id=>S.parcels.find(p=>p.id===id)?.u===n.u));
   const tg=k=>u(s=>({nprefs:{...s.nprefs,[k]:!s.nprefs[k]}})),ch=[['app','In-app'],['sms','SMS'],['wa','WhatsApp']].filter(([k])=>pr[k]).map(x=>x[1]);
   return <><Head eb="Fraud early warning" title="Notifications" sub="Get told when someone views, claims or applies for a change on your plot."/>
     <div className="card" style={{marginBottom:12}}><b>Channels</b><div className="row mt" role="group" aria-label="Channels">{[['app','In-app'],['sms','SMS'],['wa','WhatsApp']].map(([k,l])=><button key={k} className={'chip'+(pr[k]?' on':'')} aria-pressed={pr[k]} onClick={()=>tg(k)}>{l}</button>)}</div><div className="mut small mt">SMS and WhatsApp are simulated until a gateway is connected.</div></div>

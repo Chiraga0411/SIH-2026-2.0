@@ -5,8 +5,15 @@ const parcelSchema = new mongoose.Schema(
     ulpin: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      match: /^[0-9A-Z]{14}$/
     },
+
+    legacyId: String,
+    surveyNo: String,
+    address: String,
+    registeredAreaSqYd: Number,
+    rorAreaSqYd: Number,
 
     state: {
       type: String,
@@ -49,11 +56,13 @@ const parcelSchema = new mongoose.Schema(
       type: {
         type: String,
         enum: ["Polygon"],
-        default: "Polygon"
+        default: "Polygon",
+        required: true
       },
       coordinates: {
         type: [[[Number]]],
-        default: []
+        required: true,
+        validate: (v) => Array.isArray(v) && v.length > 0 && v[0].length >= 4
       }
     },
 
@@ -88,5 +97,10 @@ const parcelSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+parcelSchema.index({ geometry: "2dsphere" });
+parcelSchema.index({ legacyId: 1 });
+parcelSchema.index({ surveyNo: 1 });
+parcelSchema.index({ state: 1 });
 
 module.exports = mongoose.model("Parcel", parcelSchema);

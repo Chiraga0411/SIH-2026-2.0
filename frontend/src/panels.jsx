@@ -1,6 +1,7 @@
+import {fetchFullReport,fetchTrustScore} from './api.js';
 import {useState,useEffect} from 'react';
 import {Badge} from './ui.jsx';
-import {rec,breakdown,trust} from './records.js';
+import {rec,breakdown,trust,riskProfile} from './records.js';
 const bar=v=>v>=75?'#16A34A':v>=50?'#F59E0B':'#DC2626';
 export function RecordStatus({p}){const r=rec(p),m=r.mortgages[0],c=r.cases[0];
   const rows=[['Ownership',p.s==='disp'?'no':'ok',p.s==='disp'?'Disputed':'Verified'],['Government land',r.govt==='None'?'ok':'no',r.govt],['Registration',r.reg.deed?'ok':'wa',r.reg.deed?'Deed '+r.reg.deed:'Deed number missing'],
@@ -15,6 +16,14 @@ export function ScorePanel({p}){const [api,setApi]=useState(null),b=breakdown(p)
     {b.cap&&<div className="note" style={{background:'var(--reds)',marginTop:8,fontSize:12.5}}><b>Cap applied.</b> {b.cap}</div>}
     {b.warn.map(w=><div key={w} className="note" style={{background:'var(--safs)',marginTop:6,fontSize:12.5}}>{w}</div>)}
     <div className="small" style={{marginTop:8}}><b>Top factors:</b> {b.why.join('; ')}</div></div>}
+export function RiskProfile({p}){const rp=riskProfile(p);
+  return <div style={{marginTop:16}}><b style={{font:'500 16px var(--d)'}}>Risk profile</b>
+    <div className="mut small" style={{margin:'4px 0 8px'}}>{rp.passCount}/{rp.count} categories passed · {rp.flagged.length} flagged</div>
+    <div className="risk-grid">{rp.cats.map(c=><div key={c.n} className="risk-cat" style={{borderColor:c.pass?'var(--line)':'rgba(197,61,61,.3)'}}>
+      <div className="risk-cat-head"><b>{c.n}</b><Badge k={c.pass?'ok':'no'}>{c.pass?'Pass':'Flag'}</Badge></div>
+      <div className="risk-cat-body">{c.evidence}</div>
+      <div className="mut" style={{fontSize:10,fontFamily:'var(--m)',marginTop:4}}>{c.rule}</div>
+    </div>)}</div></div>}
 export function LayerExplorer({p}){const r=rec(p),s=r.sources,[open,setOpen]=useState('Base');
   const L={Base:[['Parcel boundary + ULPIN',p.u,s.base],['Khasra / survey no.',r.khasra||'Missing',s.base]],
     Essential:[['Record of Rights',r.coOwners.map(x=>x.join(' '+'· ')).join(', '),s.ror],['Registration',`${r.reg.deed||'deed no. missing'}, ${r.reg.date}, ${r.reg.office}`,s.reg],

@@ -59,4 +59,7 @@ const registrationSchema = new mongoose.Schema(
   }
 );
 
+// Two buyers cannot both be pending on one listing.
+registrationSchema.index({ listing: 1 }, { unique: true, partialFilterExpression: { status: "PENDING" } });
+
 module.exports = mongoose.model("Registration", registrationSchema);

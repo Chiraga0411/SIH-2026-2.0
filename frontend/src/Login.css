@@ -11,14 +11,13 @@
     box-sizing: border-box
 }
 
-
-/* ---------- hero ---------- */
+/* ---------- hero with 3D globe ---------- */
 
 .ls-hero {
     position: relative;
     overflow: hidden;
     background: linear-gradient(160deg, var(--f3), var(--f) 55%, var(--f2));
-    color: #F4EFE2;
+    color: #EAF2FF;
     padding: 44px 52px;
     display: flex;
     flex-direction: column;
@@ -26,14 +25,76 @@
     gap: 36px
 }
 
+/* 3D rotating globe background */
+.ls-globe-bg {
+    position: absolute;
+    right: -120px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 520px;
+    height: 520px;
+    pointer-events: none;
+    opacity: .35
+}
+
+.ls-globe-sphere {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(94, 168, 255, .35), rgba(11, 61, 145, .08) 60%, transparent 80%);
+    border: 1px solid rgba(94, 168, 255, .2);
+    box-shadow: inset 0 0 80px rgba(94, 168, 255, .10), 0 0 100px rgba(30, 114, 209, .15)
+}
+
+.ls-globe-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(94, 168, 255, .15);
+    animation: globePulse 4s ease-in-out infinite
+}
+
+.ls-globe-ring:nth-child(2) {
+    inset: 30px;
+    animation-delay: 1s
+}
+
+.ls-globe-ring:nth-child(3) {
+    inset: 60px;
+    animation-delay: 2s
+}
+
+@keyframes globePulse {
+    0%, 100% { opacity: .3; transform: scale(1) }
+    50% { opacity: .6; transform: scale(1.03) }
+}
+
+/* latitude/longitude grid */
+.ls-globe-grid {
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    animation: globeSpin 25s linear infinite
+}
+
+@keyframes globeSpin {
+    to { transform: rotateY(360deg) }
+}
+
+.ls-globe-grid svg {
+    width: 100%;
+    height: 100%
+}
+
 .ls-grid {
     position: absolute;
     inset: 0;
-    opacity: .5;
+    opacity: .35;
     pointer-events: none
 }
 
-.ls-hero>*:not(.ls-grid) {
+.ls-hero>*:not(.ls-grid):not(.ls-globe-bg) {
     position: relative;
     z-index: 1
 }
@@ -50,19 +111,30 @@
 
 .ls-brand i {
     font-style: italic;
-    color: var(--saf);
+    color: #5EA8FF;
     font-weight: 500
 }
 
 .ls-mark {
     width: 42px;
     height: 42px;
-    border-radius: 12px;
-    background: rgba(255, 253, 248, .1);
-    border: 1px solid rgba(255, 253, 248, .25);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5EA8FF, #1E72D1);
+    border: 1px solid rgba(255, 255, 255, .25);
     display: grid;
     place-items: center;
-    color: #F4EFE2
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(94, 168, 255, .35)
+}
+
+.ls-mark::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, .3) 90deg, transparent 180deg, rgba(255, 255, 255, .15) 270deg, transparent 360deg);
+    animation: spinGlobe 6s linear infinite
 }
 
 .ls-eyebrow {
@@ -72,9 +144,9 @@
     font-size: 12.5px;
     font-weight: 600;
     letter-spacing: .4px;
-    color: #DCEEDD;
-    background: rgba(220, 238, 221, .1);
-    border: 1px solid rgba(220, 238, 221, .25);
+    color: #B8D6FF;
+    background: rgba(94, 168, 255, .1);
+    border: 1px solid rgba(94, 168, 255, .25);
     padding: 6px 14px;
     border-radius: 999px;
     margin-bottom: 22px
@@ -90,7 +162,7 @@
 }
 
 .ls-hero h1 em {
-    color: var(--saf);
+    color: #5EA8FF;
     font-style: italic
 }
 
@@ -99,7 +171,7 @@
     margin: 20px 0 0;
     font-size: 16.5px;
     line-height: 1.6;
-    color: rgba(244, 239, 226, .78)
+    color: rgba(234, 242, 255, .78)
 }
 
 .ls-feats {
@@ -116,13 +188,13 @@
     gap: 12px;
     align-items: flex-start;
     font-size: 15px;
-    color: rgba(244, 239, 226, .92)
+    color: rgba(234, 242, 255, .92)
 }
 
 .ls-feats svg {
     flex: none;
     margin-top: 1px;
-    color: var(--saf)
+    color: #5EA8FF
 }
 
 .ls-stats {
@@ -130,9 +202,9 @@
     gap: 26px;
     flex-wrap: wrap;
     padding-top: 22px;
-    border-top: 1px solid rgba(244, 239, 226, .18);
+    border-top: 1px solid rgba(94, 168, 255, .18);
     font-size: 13px;
-    color: rgba(244, 239, 226, .7)
+    color: rgba(234, 242, 255, .7)
 }
 
 .ls-stats b {
@@ -140,9 +212,8 @@
     font-family: var(--d);
     font-size: 24px;
     font-weight: 500;
-    color: #F4EFE2
+    color: #EAF2FF
 }
-
 
 /* ---------- panel ---------- */
 
@@ -221,7 +292,9 @@
 }
 
 .ls-role:hover {
-    border-color: var(--sage)
+    border-color: var(--sage);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(11, 61, 145, .10)
 }
 
 .ls-role .ic {
@@ -248,12 +321,12 @@
 .ls-role.on {
     border-color: var(--f);
     background: #fff;
-    box-shadow: 0 8px 24px rgba(22, 51, 41, .12)
+    box-shadow: 0 8px 28px rgba(11, 61, 145, .15)
 }
 
 .ls-role.on .ic {
-    background: var(--f);
-    color: #F4EFE2
+    background: linear-gradient(135deg, var(--f), var(--f2));
+    color: #fff
 }
 
 .ls-card {
@@ -261,7 +334,7 @@
     border: 1px solid var(--line);
     border-radius: 22px;
     padding: 26px;
-    box-shadow: var(--sh)
+    box-shadow: var(--sh3d)
 }
 
 .ls-utabs {
@@ -323,11 +396,11 @@
 
 .ls-page .ls-in:focus {
     border-color: var(--f2);
-    box-shadow: 0 0 0 4px rgba(31, 70, 54, .12)
+    box-shadow: 0 0 0 4px rgba(21, 84, 181, .12)
 }
 
 .ls-page .ls-in::placeholder {
-    color: #A9A996
+    color: #A9B5C8
 }
 
 .ls-row {
@@ -347,7 +420,7 @@
 
 .ls-phone:focus-within {
     border-color: var(--f2);
-    box-shadow: 0 0 0 4px rgba(31, 70, 54, .12)
+    box-shadow: 0 0 0 4px rgba(21, 84, 181, .12)
 }
 
 .ls-cc {
@@ -414,8 +487,8 @@
     height: 50px;
     border: 0;
     border-radius: 14px;
-    background: var(--f);
-    color: #F4EFE2;
+    background: linear-gradient(135deg, var(--f), var(--f2));
+    color: #fff;
     font-size: 15.5px;
     font-weight: 600;
     display: flex;
@@ -424,26 +497,29 @@
     gap: 10px;
     cursor: pointer;
     font-family: inherit;
-    transition: .15s
+    transition: .15s;
+    box-shadow: 0 6px 22px rgba(11, 61, 145, .22)
 }
 
 .ls-btn:hover:not(:disabled) {
-    background: var(--f2);
-    transform: translateY(-1px)
+    background: linear-gradient(135deg, var(--f2), #1E72D1);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 32px rgba(11, 61, 145, .30)
 }
 
 .ls-btn:disabled {
-    background: #B9C2B5;
-    color: #F4EFE2;
-    cursor: not-allowed
+    background: #B5C5DB;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none
 }
 
 .ls-btn.saf {
-    background: var(--saf)
+    background: linear-gradient(135deg, #1E72D1, #5EA8FF)
 }
 
 .ls-btn.saf:hover:not(:disabled) {
-    background: #b06a22
+    background: linear-gradient(135deg, #1554B5, #4A8FE7)
 }
 
 .ls-link {
@@ -467,7 +543,7 @@
 
 .ls-err {
     background: var(--reds);
-    border: 1px solid #E9B7AF;
+    border: 1px solid #E9B7B7;
     color: var(--red);
     border-radius: 12px;
     padding: 10px 14px;
@@ -477,7 +553,7 @@
 
 .ls-ok {
     background: var(--mint);
-    border: 1px solid #BFDcc3;
+    border: 1px solid #B0D0F0;
     color: var(--mintt);
     border-radius: 12px;
     padding: 10px 14px;
@@ -509,7 +585,7 @@
 
 .ls-page .ls-otpbox input:focus {
     border-color: var(--f2);
-    box-shadow: 0 0 0 4px rgba(31, 70, 54, .12)
+    box-shadow: 0 0 0 4px rgba(21, 84, 181, .12)
 }
 
 .ls-page .ls-otpbox input.filled {
@@ -522,7 +598,7 @@
     align-items: center;
     gap: 6px;
     background: var(--safs);
-    color: #8a4f12;
+    color: var(--f);
     font-size: 11.5px;
     font-weight: 700;
     padding: 5px 11px;
@@ -560,7 +636,8 @@
 }
 
 .ls-dept:hover {
-    border-color: var(--sage)
+    border-color: var(--sage);
+    transform: translateY(-1px)
 }
 
 .ls-dept .code {
@@ -593,8 +670,8 @@
 }
 
 .ls-dept.on .code {
-    background: var(--f);
-    color: #F4EFE2
+    background: linear-gradient(135deg, var(--f), var(--f2));
+    color: #fff
 }
 
 .ls-pw {
@@ -644,7 +721,8 @@
         gap: 22px
     }
     .ls-feats,
-    .ls-stats {
+    .ls-stats,
+    .ls-globe-bg {
         display: none
     }
     .ls-hero h1 {
@@ -666,3 +744,13 @@
         padding: 20px
     }
 }
+
+/* realistic canvas globe */
+.ls-globe-bg{opacity:1;width:640px;height:640px;right:-190px}
+.ls-globe-cv{width:100%;height:100%;display:block;pointer-events:auto;cursor:grab;touch-action:pan-y}
+.ls-globe-cv:active{cursor:grabbing}
+.ls-track{display:flex;flex-direction:column;gap:6px;max-width:380px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(150,200,255,.3);backdrop-filter:blur(8px);font-size:13px}
+.ls-trow{display:flex;gap:8px}.ls-trow input{flex:1;min-width:0;padding:8px 10px;border-radius:8px;border:1px solid rgba(150,200,255,.4);background:rgba(255,255,255,.92);color:#0A1B3D}
+.ls-trow button{padding:8px 14px;border-radius:8px;border:0;background:#fff;color:#0B3D91;font-weight:600;cursor:pointer}
+.ls-terr{color:#FFD0D0}.ls-tres ol{margin:6px 0;padding-left:18px}.ls-tres li{opacity:.6}.ls-tres li.done{opacity:1}.ls-tres li.done::marker{content:'✓ '}.ls-tres li.now{opacity:1;font-weight:700;color:#BFE0FF}
+@media(max-width:725px){.ls-globe-bg{width:420px;height:420px;right:-150px;opacity:.7}}

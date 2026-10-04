@@ -1,6 +1,7 @@
-import {useState,useRef} from 'react';
+import Globe from './Globe.jsx';import TrackBox from './Track.jsx';
+import {useState,useRef,useEffect} from 'react';
+import * as API from './api.js';
 import './Login.css';
-import {loginCitizen,loginOfficial} from './api.js';
 
 /* ---------- text (English / Hindi) ---------- */
 const TXT={
@@ -9,36 +10,37 @@ en:{badge:'National Land Record Authentication & RBAC Engine',hA:'One ULPIN.',hB
  f1:'Verified land records with a live Trust Score',f2:'Your data is shared only with your consent',f3:'AI alerts for fraud, disputes and boundary mismatches',
  s1:'Active users',s2:'States live',s3:'Uptime',welcome:'Welcome to Land Stack',sub:'Choose how you want to sign in.',
  tC:'Citizen',tCd:'Owner, buyer or seller',tD:'Official',tDd:'Revenue, registry, planning, admin',
- login:'Log in with OTP',signup:'Create account',mobile:'Mobile number',otpNote:'We will send a 6-digit code by SMS (simulated in this demo).',
- getOtp:'Send verification code',name:'Full legal name',namePh:'e.g. Ramesh Kumar',email:'Email (optional)',emailPh:'name@example.com',
+ login:'Log in',signup:'Create account',mobile:'Mobile number',otpNote:'Enter your password, then we will send you a 6-digit verification code.',
+ getOtp:'Continue',signin:'Log in',ident:'Mobile number or email',identPh:'98765 43210 or name@example.com',cpw:'Password',newPw:'Create a password',pwHint:'At least 8 characters, with letters and numbers.',badEmail:'Enter a valid email address.',badPw:'Password must be at least 8 characters with letters and numbers.',badLogin:'Enter your mobile number or email, and your password.',netErr:'Cannot reach the server. Check your connection and try again.',wait:'Please wait...',name:'Full legal name',namePh:'e.g. Demo Owner',email:'Email',emailPh:'name@example.com',
  district:'District',circle:'Circle / Anchal',mauza:'Mauza / Village (optional)',register:'Create account & send code',
- gov:'GOVERNMENT OFFICIALS ONLY',govInfo:'Official accounts are pre-provisioned in the State Land Registry. Pick your department, then sign in with your Employee ID.',
+ gov:'GOVERNMENT OFFICIALS ONLY',govInfo:'Official accounts are pre-provisioned in the State Land Registry. Pick your department, then sign in with your Employee ID and the password issued to you.',
  emp:'Employee ID / Gov email',pwd:'Password',show:'Show',hide:'Hide',secure:'Sign in securely',
- enterOtp:'Enter the 6-digit code',sentTo:'Code sent to',verify:'Verify & continue',change:'Change number',resend:'Clear & retry',
+ enterOtp:'Enter the 6-digit code',sentTo:'Code sent to',verify:'Verify & continue',change:'Change number',resend:'Resend code',
  badPhone:'Enter a valid 10-digit Indian mobile number.',badName:'Please enter your full legal name.',badOtp:'Incorrect code. Please try again.',
- badCred:'Employee ID or password is incorrect for this department.',demoPwd:'Demo password'},
+ badCred:'Employee ID or password is incorrect.'},
 hi:{badge:'राष्ट्रीय भूमि अभिलेख प्रमाणीकरण एवं RBAC इंजन',hA:'एक ULPIN।',hB:'पूरी सच्चाई',hC:'हर भूखंड की।',
  lead:'सत्यापित स्वामित्व, आपके नियंत्रण में गोपनीयता, और AI जो किसी का घर खोने से पहले धोखाधड़ी पकड़ ले।',
  f1:'सत्यापित भूमि अभिलेख और लाइव Trust Score',f2:'आपका डेटा केवल आपकी सहमति से साझा होता है',f3:'धोखाधड़ी, विवाद और सीमा-अंतर पर AI चेतावनी',
  s1:'सक्रिय उपयोगकर्ता',s2:'राज्य लाइव',s3:'अपटाइम',welcome:'लैंड स्टैक में स्वागत है',sub:'चुनें कि आप कैसे साइन इन करना चाहते हैं।',
  tC:'नागरिक',tCd:'मालिक, खरीदार या विक्रेता',tD:'अधिकारी',tDd:'राजस्व, पंजीकरण, योजना, प्रशासन',
- login:'OTP से लॉगिन',signup:'खाता बनाएँ',mobile:'मोबाइल नंबर',otpNote:'हम SMS से 6 अंकों का कोड भेजेंगे (इस डेमो में सिम्युलेटेड)।',
- getOtp:'सत्यापन कोड भेजें',name:'पूरा कानूनी नाम',namePh:'जैसे रमेश कुमार',email:'ईमेल (वैकल्पिक)',emailPh:'name@example.com',
+ login:'लॉगिन',signup:'खाता बनाएँ',mobile:'मोबाइल नंबर',otpNote:'अपना पासवर्ड दर्ज करें, फिर हम आपको 6 अंकों का सत्यापन कोड भेजेंगे।',
+ getOtp:'आगे बढ़ें',signin:'लॉगिन',ident:'मोबाइल नंबर या ईमेल',identPh:'98765 43210 या name@example.com',cpw:'पासवर्ड',newPw:'पासवर्ड बनाएँ',pwHint:'कम से कम 8 अक्षर, जिनमें अक्षर और अंक दोनों हों।',badEmail:'कृपया सही ईमेल दर्ज करें।',badPw:'पासवर्ड कम से कम 8 अक्षर का हो, जिसमें अक्षर और अंक दोनों हों।',badLogin:'अपना मोबाइल नंबर या ईमेल और पासवर्ड दर्ज करें।',netErr:'सर्वर से संपर्क नहीं हो पा रहा। कनेक्शन जाँचकर फिर प्रयास करें।',wait:'कृपया प्रतीक्षा करें...',name:'पूरा कानूनी नाम',namePh:'जैसे रमेश कुमार',email:'ईमेल',emailPh:'name@example.com',
  district:'जिला',circle:'अंचल',mauza:'मौजा / गाँव (वैकल्पिक)',register:'खाता बनाएँ और कोड भेजें',
- gov:'केवल सरकारी अधिकारी',govInfo:'आधिकारिक खाते राज्य भूमि रजिस्ट्री में पहले से बने होते हैं। अपना विभाग चुनें और कर्मचारी आईडी से साइन इन करें।',
+ gov:'केवल सरकारी अधिकारी',govInfo:'आधिकारिक खाते राज्य भूमि रजिस्ट्री में पहले से बने होते हैं। अपना विभाग चुनें और कर्मचारी आईडी तथा आपको दिए गए पासवर्ड से साइन इन करें।',
  emp:'कर्मचारी आईडी / सरकारी ईमेल',pwd:'पासवर्ड',show:'दिखाएँ',hide:'छिपाएँ',secure:'सुरक्षित साइन इन',
- enterOtp:'6 अंकों का कोड दर्ज करें',sentTo:'कोड भेजा गया',verify:'सत्यापित करें और आगे बढ़ें',change:'नंबर बदलें',resend:'साफ़ करें और फिर से लिखें',
+ enterOtp:'6 अंकों का कोड दर्ज करें',sentTo:'कोड भेजा गया',verify:'सत्यापित करें और आगे बढ़ें',change:'नंबर बदलें',resend:'कोड फिर से भेजें',
  badPhone:'कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें।',badName:'कृपया अपना पूरा नाम लिखें।',badOtp:'कोड गलत है। फिर से प्रयास करें।',
- badCred:'इस विभाग के लिए कर्मचारी आईडी या पासवर्ड गलत है।',demoPwd:'डेमो पासवर्ड'}
+ badCred:'कर्मचारी आईडी या पासवर्ड गलत है।'}
 };
 
-/* ---------- demo department accounts (replace with real auth API later) ---------- */
-export const DEMO_OTP='123456',DEMO_PWD='demo123';
+/* ---------- department list shown on the Official tab (authentication happens on the server) ---------- */
 const DEPTS=[
  {k:'REV',dn:'Revenue & Land Records',who:'Vikram Singh \u00B7 Circle Officer, Basopatti',id:'REV-001',name:'Vikram Singh',role:'officer',view:'office'},
-	 {k:'REG',dn:'Registration Department',who:'Sunita Devi \u00B7 Sub-Registrar',id:'REG-001',name:'Sunita Devi',role:'registrar',view:'reg'},
-	 {k:'PLN',dn:'Urban Planning',who:'Meera Singh \u00B7 Planner',id:'PLN-001',name:'Meera Singh',role:'planner',view:'plan'},
- {k:'ADM',dn:'IT & System Administration',who:'Ops Admin',id:'ADM-001',name:'Ops Admin',role:'admin',view:'adm'}
+ {k:'REG',dn:'Registration Department',who:'Sunita Devi \u00B7 Sub-Registrar',id:'REG-001',name:'Sunita Devi',role:'officer',view:'reg'},
+ {k:'PLN',dn:'Urban Planning',who:'Meera Singh \u00B7 Town Planner',id:'PLN-001',name:'Meera Singh',role:'officer',view:'plan'},
+ {k:'TAX',dn:'Revenue / Tax Officer',who:'Karthik Raja \u00B7 Tax Officer',id:'TAX-001',name:'Karthik Raja',role:'officer',view:'office'},
+ {k:'AUD',dn:'C&AG Audit',who:'Lakshmi Devi \u00B7 Auditor',id:'AUD-001',name:'Lakshmi Devi',role:'admin',view:'audit'},
+ {k:'ADM',dn:'IT & System Administration',who:'Ops Admin \u00B7 Super Admin',id:'ADM-001',name:'Ops Admin',role:'admin',view:'adm'}
 ];
 
 /* ---------- small inline icons ---------- */
@@ -61,27 +63,39 @@ export function Login({u,lang:extLang,setLang:extSet}){
   const [district,setDistrict]=useState('Madhubani'),[circle,setCircle]=useState('Basopatti'),[mauza,setMauza]=useState('Mauza Arghawa (33)');
   const [dg,setDg]=useState(['','','','','','']),otp=dg.join(''),boxes=useRef([]),[err,setErr]=useState('');
   const [dk,setDk]=useState('REV'),dept=DEPTS.find(d=>d.k===dk),[emp,setEmp]=useState(dept.id),[pwd,setPwd]=useState(''),[showPw,setShowPw]=useState(false);
+  const [ident,setIdent]=useState(''),[cpw,setCpw]=useState(''),[showCpw,setShowCpw]=useState(false),[purpose,setPurpose]=useState('login'),[masked,setMasked]=useState(''),[cool,setCool]=useState(0),[busy,setBusy]=useState(false);
+  useEffect(()=>{if(cool<=0)return;const id=setTimeout(()=>setCool(c=>c-1),1000);return()=>clearTimeout(id)},[cool]);
 
-  const phoneOk=/^[6-9]\d{9}$/.test(phone);
-  const clearOtp=()=>{setDg(['','','','','','']);setErr('')};
-  const reset=()=>{setStep('form');clearOtp()};
-  const enter=(role,view,name)=>u({role,view,name});
+  const phoneOk=/^[6-9]\d{9}$/.test(phone),emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()),pwOk=cpw.length>=8&&/[A-Za-z]/.test(cpw)&&/\d/.test(cpw);
+  const reset=()=>{setStep('form');setDg(['','','','','','']);setErr('');setCool(0)};
+  const enter=res=>{API.setToken(res.token);u(API.sessionFromUser(res.user))};
+  const fail=e=>setErr(e instanceof API.ApiError&&e.message==='NETWORK'?t.netErr:e.message||t.netErr);
+  const run=async fn=>{if(busy)return;setBusy(true);setErr('');try{await fn()}catch(e){fail(e)}finally{setBusy(false)}};
+  const toOtp=(p,r)=>{setPurpose(p);setMasked(r.sentTo||'');setCool(r.resendAfter||30);setDg(['','','','','','']);setStep('otp')};
 
-  const sendOtp=()=>{
-    if(mode==='signup'&&fname.trim().length<2){setErr(t.badName);return}
-    if(!phoneOk){setErr(t.badPhone);return}
-    setErr('');setStep('otp');
+  const startLogin=()=>{
+    if(!ident.trim()||!cpw){setErr(t.badLogin);return}
+    run(async()=>{const r=await API.login(ident.trim(),cpw);if(r.token)enter(r);else toOtp('login',r)}); // server asks for a code only when LOGIN_OTP=always
   };
-	const verify=async()=>{
-	    if(otp!==DEMO_OTP){setErr(t.badOtp);return}
-	    try { const result=await loginCitizen({phone,otp,name:mode==='signup'?fname.trim():'Ramesh Kumar'}); sessionStorage.setItem('landstack_token',result.token); enter('citizen','map',result.user?.name||'Ramesh Kumar'); }
-	    catch { enter('citizen','map',mode==='signup'?fname.trim():'Ramesh Kumar'); }
-	  };
-	  const deptLogin=async()=>{
-	    if(emp.trim().toUpperCase()!==dept.id||pwd!==DEMO_PWD){setErr(t.badCred);return}
-	    try { const result=await loginOfficial({employeeId:emp,password:pwd}); sessionStorage.setItem('landstack_token',result.token); const role=result.user?.role||dept.role; enter(role,role==='registrar'?'reg':role==='planner'?'plan':dept.view,result.user?.name||dept.name); }
-	    catch { enter(dept.role,dept.view,dept.name); }
-	  };
+  const startSignup=()=>{
+    if(fname.trim().length<2){setErr(t.badName);return}
+    if(!emailOk){setErr(t.badEmail);return}
+    if(!phoneOk){setErr(t.badPhone);return}
+    if(!pwOk){setErr(t.badPw);return}
+    run(async()=>toOtp('register',await API.register({name:fname.trim(),email:email.trim(),phone,password:cpw,district,circle,mauza})));
+  };
+  const verify=()=>{
+    if(otp.length!==6)return;
+    run(async()=>enter(purpose==='register'?await API.verifyRegister(phone,otp):await API.verifyLogin(ident.trim(),otp)));
+  };
+  const resend=()=>{
+    if(cool>0)return;
+    run(async()=>{const r=await API.resendOtp(purpose==='register'?phone:ident.trim(),purpose);setCool(r.resendAfter||30);setDg(['','','','','','']);boxes.current[0]?.focus()});
+  };
+  const deptLogin=()=>{
+    if(!emp.trim()||!pwd){setErr(t.badCred);return}
+    run(async()=>enter(await API.officialLogin(emp.trim(),pwd)));
+  };
   const pickDept=k=>{setDk(k);setEmp(DEPTS.find(d=>d.k===k).id);setPwd('');setErr('')};
 
   const onDigit=(i,e)=>{
@@ -99,27 +113,29 @@ export function Login({u,lang:extLang,setLang:extSet}){
     <div className="ls-phone"><span className="ls-cc"><Flag/>+91</span>
       <input id={id} inputMode="numeric" autoComplete="tel-national" maxLength={10} placeholder="98765 43210" value={phone}
         onChange={e=>{setPhone(e.target.value.replace(/\D/g,''));setErr('')}}
-        onKeyDown={e=>e.key==='Enter'&&sendOtp()}/></div>);
+        onKeyDown={e=>e.key==='Enter'&&mode==='signup'&&startSignup()}/></div>);
 
   const otpStep=()=>(<>
-    <div className="ls-ok">{t.sentTo} +91 {phone.slice(0,2)}XXXXXX{phone.slice(-2)} &nbsp;<b>(demo: {DEMO_OTP})</b></div>
+    <div className="ls-ok">{t.sentTo} {masked}</div>
     <label>{t.enterOtp}</label>
     <div className="ls-otpbox">{dg.map((d,i)=>
       <input key={i} ref={el=>boxes.current[i]=el} className={d?'filled':''} inputMode="numeric" autoFocus={i===0}
         aria-label={`Digit ${i+1}`} value={d} onChange={e=>onDigit(i,e)} onKeyDown={e=>onDigitKey(i,e)} onFocus={e=>e.target.select()}/>)}</div>
     {err&&<div className="ls-err" role="alert">{err}</div>}
-    <button className="ls-btn saf" disabled={otp.length!==6} onClick={verify}><IcCheck/>{t.verify}</button>
-    <div className="ls-links"><button className="ls-link" onClick={reset}>{t.change}</button><button className="ls-link" onClick={clearOtp}>{t.resend}</button></div>
+    <button className="ls-btn saf" disabled={otp.length!==6||busy} onClick={verify}><IcCheck/>{t.verify}</button>
+    <div className="ls-links"><button className="ls-link" onClick={reset}>{t.change}</button><button className="ls-link" disabled={cool>0||busy} onClick={resend}>{cool>0?`${t.resend} (${cool}s)`:t.resend}</button></div>
   </>);
 
   return <div className="ls-page">
     <section className="ls-hero">
+      {/* 3D rotating globe */}
+      <div className="ls-globe-bg"><Globe/></div>
       <svg className="ls-grid" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         {[[40,60,150,110],[200,60,120,110],[330,60,210,110],[40,190,180,150],[230,190,140,70],[230,270,140,70],[380,190,160,150],[40,360,130,120],[180,360,200,120],[390,360,150,120],[40,500,220,140],[270,500,270,140],[40,660,150,100],[200,660,340,100]]
-          .map(([x,y,w,h],i)=><rect key={i} x={x} y={y} width={w} height={h} rx="4" fill={i%4===0?'rgba(220,238,221,.07)':'none'} stroke="rgba(220,238,221,.16)" strokeWidth="1.5"/>)}
-        <circle cx="300" cy="420" r="6" fill="#C77C2E"/><circle cx="300" cy="420" r="22" fill="none" stroke="#C77C2E" strokeOpacity=".5"/>
+          .map(([x,y,w,h],i)=><rect key={i} x={x} y={y} width={w} height={h} rx="4" fill={i%4===0?'rgba(94,168,255,.07)':'none'} stroke="rgba(94,168,255,.14)" strokeWidth="1.5"/>)}
+        <circle cx="300" cy="420" r="6" fill="#5EA8FF"/><circle cx="300" cy="420" r="22" fill="none" stroke="#5EA8FF" strokeOpacity=".5"/>
       </svg>
-      <div className="ls-brand"><span className="ls-mark"><IcBuilding width="22" height="22"/></span><span>Land<i>Stack</i></span></div>
+      <div className="ls-brand"><span className="ls-mark"><IcGlobe width="22" height="22"/></span><span>Land<i>Stack</i></span></div>
       <div>
         <span className="ls-eyebrow"><IcShield width="15" height="15"/>{t.badge}</span>
         <h1>{t.hA}<br/><em>{t.hB}</em> {t.hC}</h1>
@@ -127,6 +143,7 @@ export function Login({u,lang:extLang,setLang:extSet}){
         <ul className="ls-feats">{[t.f1,t.f2,t.f3].map(f=><li key={f}><IcCheck width="18" height="18"/>{f}</li>)}</ul>
       </div>
       <div className="ls-stats"><div><b>1,284</b>{t.s1}</div><div><b>2</b>{t.s2}</div><div><b>99.9%</b>{t.s3}</div></div>
+    <TrackBox/>
     </section>
 
     <section className="ls-panel">
@@ -135,33 +152,42 @@ export function Login({u,lang:extLang,setLang:extSet}){
         <h2>{t.welcome}</h2><p className="ls-sub">{t.sub}</p>
 
         <div className="ls-roles" role="tablist">
-          <button role="tab" aria-selected={tab==='citizen'} className={'ls-role'+(tab==='citizen'?' on':'')} onClick={()=>{setTab('citizen');reset()}}><span className="ic"><IcUser/></span><b>{t.tC}</b><span>{t.tCd}</span></button>
+          <button role="tab" aria-selected={tab==='citizen'} className={'ls-role'+(tab==='citizen'?' on':'')} onClick={()=>{setTab('citizen');reset();setCpw('')}}><span className="ic"><IcUser/></span><b>{t.tC}</b><span>{t.tCd}</span></button>
           <button role="tab" aria-selected={tab==='dept'} className={'ls-role'+(tab==='dept'?' on':'')} onClick={()=>{setTab('dept');setErr('')}}><span className="ic"><IcBank/></span><b>{t.tD}</b><span>{t.tDd}</span></button>
         </div>
 
         <div className="ls-card">
         {tab==='citizen'&&<>
           <div className="ls-utabs">
-            <button className={mode==='login'?'on':''} onClick={()=>{setMode('login');reset()}}>{t.login}</button>
-            <button className={mode==='signup'?'on':''} onClick={()=>{setMode('signup');reset()}}>{t.signup}</button>
+            <button className={mode==='login'?'on':''} onClick={()=>{setMode('login');reset();setCpw('')}}>{t.login}</button>
+            <button className={mode==='signup'?'on':''} onClick={()=>{setMode('signup');reset();setCpw('')}}>{t.signup}</button>
           </div>
 
           {step==='otp'?otpStep():mode==='login'?<>
-            <div className="ls-field"><label htmlFor="ls-ph">{t.mobile}</label>{phoneField('ls-ph')}</div>
-            <p className="ls-hint">{t.otpNote}</p>
+            <div className="ls-field"><label htmlFor="ls-id">{t.ident}</label>
+              <input id="ls-id" className="ls-in" placeholder={t.identPh} value={ident} autoComplete="username" onChange={e=>{setIdent(e.target.value);setErr('')}}/></div>
+            <div className="ls-field"><label htmlFor="ls-cpw">{t.cpw}</label>
+              <div className="ls-pw"><input id="ls-cpw" className="ls-in" type={showCpw?'text':'password'} value={cpw} autoComplete="current-password"
+                onChange={e=>{setCpw(e.target.value);setErr('')}} onKeyDown={e=>e.key==='Enter'&&startLogin()}/>
+                <button type="button" onClick={()=>setShowCpw(v=>!v)}>{showCpw?t.hide:t.show}</button></div></div>
             {err&&<div className="ls-err" role="alert">{err}</div>}
-            <button className="ls-btn" disabled={!phoneOk} onClick={sendOtp}><IcSend/>{t.getOtp}</button>
+            <button className="ls-btn" disabled={!ident.trim()||!cpw||busy} onClick={startLogin}><IcSend/>{busy?t.wait:t.signin}</button>
           </>:<>
             <div className="ls-field"><label htmlFor="ls-n">{t.name} <i>*</i></label><input id="ls-n" className="ls-in" placeholder={t.namePh} value={fname} onChange={e=>{setFname(e.target.value);setErr('')}}/></div>
-            <div className="ls-field"><label htmlFor="ls-e">{t.email}</label><input id="ls-e" className="ls-in" type="email" placeholder={t.emailPh} value={email} onChange={e=>setEmail(e.target.value)}/></div>
+            <div className="ls-field"><label htmlFor="ls-e">{t.email} <i>*</i></label><input id="ls-e" className="ls-in" type="email" placeholder={t.emailPh} value={email} autoComplete="email" onChange={e=>{setEmail(e.target.value);setErr('')}}/></div>
             <div className="ls-row">
               <div className="ls-field"><label htmlFor="ls-d">{t.district}</label><input id="ls-d" className="ls-in" value={district} onChange={e=>setDistrict(e.target.value)}/></div>
               <div className="ls-field"><label htmlFor="ls-c">{t.circle}</label><input id="ls-c" className="ls-in" value={circle} onChange={e=>setCircle(e.target.value)}/></div>
             </div>
             <div className="ls-field"><label htmlFor="ls-m">{t.mauza}</label><input id="ls-m" className="ls-in" value={mauza} onChange={e=>setMauza(e.target.value)}/></div>
             <div className="ls-field"><label htmlFor="ls-ph2">{t.mobile} <i>*</i></label>{phoneField('ls-ph2')}</div>
+            <div className="ls-field"><label htmlFor="ls-npw">{t.newPw} <i>*</i></label>
+              <div className="ls-pw"><input id="ls-npw" className="ls-in" type={showCpw?'text':'password'} value={cpw} autoComplete="new-password"
+                onChange={e=>{setCpw(e.target.value);setErr('')}} onKeyDown={e=>e.key==='Enter'&&startSignup()}/>
+                <button type="button" onClick={()=>setShowCpw(v=>!v)}>{showCpw?t.hide:t.show}</button></div>
+              <p className="ls-hint">{t.pwHint}</p></div>
             {err&&<div className="ls-err" role="alert">{err}</div>}
-            <button className="ls-btn" disabled={!phoneOk||fname.trim().length<2} onClick={sendOtp}><IcSend/>{t.register}</button>
+            <button className="ls-btn" disabled={fname.trim().length<2||!emailOk||!phoneOk||!pwOk||busy} onClick={startSignup}><IcSend/>{busy?t.wait:t.register}</button>
           </>}
         </>}
 
@@ -178,8 +204,7 @@ export function Login({u,lang:extLang,setLang:extSet}){
               onKeyDown={e=>e.key==='Enter'&&deptLogin()} autoComplete="current-password"/>
               <button type="button" onClick={()=>setShowPw(v=>!v)}>{showPw?t.hide:t.show}</button></div></div>
           {err&&<div className="ls-err" role="alert">{err}</div>}
-          <button className="ls-btn" disabled={!emp||!pwd} onClick={deptLogin}><IcKey/>{t.secure}</button>
-          <p className="ls-demo">{t.demoPwd}: <code>{DEMO_PWD}</code></p>
+          <button className="ls-btn" disabled={!emp||!pwd||busy} onClick={deptLogin}><IcKey/>{busy?t.wait:t.secure}</button>
         </>}
         </div>
       </div>
