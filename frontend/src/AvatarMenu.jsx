@@ -2,7 +2,6 @@ import {displayName} from './data.js';
 import {useState,useRef,useEffect} from 'react';
 import {snapshot} from './desk.jsx';
 import {clearToken,searchParcels} from './api.js';
-import {formatUlpin,isUlpin,normalizeUlpin} from './ulpin.jsx';
 
 const Ic=p=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}/>);
 const IcUser=p=><Ic {...p}><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></Ic>;
@@ -19,7 +18,7 @@ export function GlobalSearch({parcels,onSelect,toast}){
   const pick=p=>{onSelect(p);setQ('');setOpen(false)};
   return <div className="global-search" ref={ref}><span className="gs-icon"><IcSearch width="16" height="16"/></span>
     <input aria-label="Global search" placeholder="ULPIN, survey no. or plot name" value={q} onChange={e=>{setQ(e.target.value);setOpen(true)}} onFocus={()=>setOpen(true)} onKeyDown={e=>{if(e.key==='Enter'&&results[0])pick(results[0])}}/>
-    {open&&q.trim().length>=2&&<div className="gs-results">{/^[0-9A-Za-z-\s]+$/.test(q.trim())&&normalizeUlpin(q).length===14&&!isUlpin(q)&&<div className="gs-item"><span className="mut small">A ULPIN has 14 letters or digits, e.g. 04-01-001-002-0214.</span></div>}{(normalizeUlpin(q).length>=10&&normalizeUlpin(q).length!==14&&/^[0-9A-Za-z-\s]+$/.test(q.trim())&&/\d{6,}/.test(normalizeUlpin(q)))&&<div className="gs-item"><span className="mut small">Looks like a ULPIN but has {normalizeUlpin(q).length} characters. Expected 14.</span></div>}{loading?<div className="gs-item"><span className="mut small">Searching…</span></div>:results.length?results.slice(0,8).map(p=><div key={p.id} className="gs-item" onClick={()=>pick(p)}><span className="mono" style={{fontWeight:600}}>{formatUlpin(p.u)}</span><span className="mut small" style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.n}</span><span className="badge nu">{p.matchedBy||'match'}</span></div>):<div className="gs-item"><span className="mut small">No results for “{q}”</span></div>}</div>}
+    {open&&q.trim().length>=2&&<div className="gs-results">{loading?<div className="gs-item"><span className="mut small">Searching…</span></div>:results.length?results.slice(0,8).map(p=><div key={p.id} className="gs-item" onClick={()=>pick(p)}><span className="mono" style={{fontWeight:600}}>{p.u}</span><span className="mut small" style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.n}</span><span className="badge nu">{p.matchedBy||'match'}</span></div>):<div className="gs-item"><span className="mut small">No results for “{q}”</span></div>}</div>}
   </div>;
 }
 export function AvatarMenu({S,u,toast}){

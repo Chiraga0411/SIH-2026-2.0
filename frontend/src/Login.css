@@ -129,6 +129,7 @@
     box-shadow: 0 4px 18px rgba(94, 168, 255, .35)
 }
 
+.ls-mark img { width: 34px; height: 34px; object-fit: contain; position: relative; z-index: 1 }
 .ls-mark::before {
     content: '';
     position: absolute;

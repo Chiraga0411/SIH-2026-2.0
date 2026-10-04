@@ -113,6 +113,7 @@ nav {
 }
 
 .logo-globe {
+.logo-globe img { width: 28px; height: 28px; object-fit: contain; display: block }
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -924,9 +925,9 @@ th {
     position: fixed;
     right: 20px;
     bottom: calc(76px + env(safe-area-inset-bottom, 0));
-    width: 330px;
+    width: min(440px, calc(100vw - 32px));
     max-width: calc(100vw - 32px);
-    padding: 16px;
+    padding: 18px;
     z-index: 8
 }
 
@@ -954,7 +955,7 @@ th {
 }
 
 #clog {
-    max-height: 240px;
+    max-height: 260px;
     overflow: auto;
     margin: 8px 0
 }
@@ -964,7 +965,10 @@ th {
         bottom: calc(76px + env(safe-area-inset-bottom, 0))
     }
     .chatp {
-        bottom: calc(132px + env(safe-area-inset-bottom, 0))
+        right: 12px;
+        bottom: calc(132px + env(safe-area-inset-bottom, 0));
+        width: min(440px, calc(100vw - 24px));
+        padding: 14px
     }
 }
 
@@ -1112,17 +1116,62 @@ th {
     margin-left: 0
 }
 
+.bot-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 72px;
+    margin: 6px 0 12px;
+    padding: 10px 12px;
+    overflow: hidden;
+    border: 1px solid rgba(41, 157, 151, .24);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(236, 250, 247, .96), rgba(244, 248, 255, .96));
+    box-shadow: 0 10px 25px rgba(13, 74, 111, .10)
+}
+
+.bot-hero img {
+    position: relative;
+    z-index: 1;
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+    animation: botFloat 3.2s ease-in-out infinite
+}
+
+.bot-hero > div:last-child {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 3px
+}
+
+.bot-hero b { font: 600 17px var(--d); color: var(--ink) }
+.bot-hero div span { font-size: 12px; color: var(--soft) }
+.bot-orbit { position: absolute; inset: 0; pointer-events: none }
+.bot-orbit span { position: absolute; border: 1px solid rgba(35, 164, 157, .22); border-radius: 50%; animation: botPulse 2.8s ease-out infinite }
+.bot-orbit span:nth-child(1) { width: 100px; height: 100px; left: -24px; top: -14px }
+.bot-orbit span:nth-child(2) { width: 150px; height: 150px; left: -50px; top: -39px; animation-delay: .8s }
+.bot-orbit span:nth-child(3) { width: 210px; height: 210px; left: -80px; top: -70px; animation-delay: 1.6s }
+
 .sug {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    padding: 0 20px 12px
+    align-items: center;
+    padding: 0 0 12px
 }
+
+.sug-label { width: 100%; margin-bottom: 1px; color: var(--soft); font: 600 11px var(--m); text-transform: uppercase; letter-spacing: .08em }
+
+@keyframes botFloat { 0%,100% { transform: translateY(0) rotate(-2deg) } 50% { transform: translateY(-5px) rotate(2deg) } }
+@keyframes botPulse { 0% { opacity: .6; transform: scale(.72) } 75%,100% { opacity: 0; transform: scale(1.08) } }
 
 .comp {
     display: flex;
     gap: 10px;
-    padding: 14px 16px;
+    padding: 14px 0 0;
     border-top: 1px solid var(--line)
 }
 
@@ -1168,14 +1217,14 @@ th {
 }
 
 @media(prefers-reduced-motion:reduce) {
-    .typ s {
-        animation: none
-    }
+    .typ s, .bot-hero img, .bot-orbit span { animation: none }
 }
 
-.chatp .av {
-    display: none
-}
+.chatp .av { display: none }
+.chatp .bot-hero { margin-top: 0 }
+.chatp .sug { padding-bottom: 10px }
+.chatp .comp { padding-top: 6px }
+.chatp #clog { max-height: 190px }
 
 .chatp .mg .cm {
     max-width: 90%

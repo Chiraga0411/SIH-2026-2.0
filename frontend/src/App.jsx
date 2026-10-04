@@ -5,6 +5,7 @@ import {ChatWidget,reply} from './Chat.jsx';
 import {snapshot} from './desk.jsx';
 import {initTranslator,applyLang,readLang,saveLang,t} from './i18n.js';
 import {AvatarMenu,GlobalSearch} from './AvatarMenu.jsx';
+import appLogo from './assets/landstack-logo.png';
 import {getToken,clearToken,me,sessionFromUser,fetchParcels,isDemoMode,setSandbox,askAssistant,myProperties,claimsQueue,serviceRequests,listings,registrations,alerts,conflicts,dues,consents} from './api.js';
 
 const FIRST_SUB={}
@@ -81,7 +82,7 @@ export default function App(){
   return <div className="app">
     {(isDemoMode()||S.sandbox)&&<div className="demo-banner" aria-label="Demo mode">{isDemoMode()?'Demo mode · data is simulated':'Sandbox mode · changes are discarded on exit'}</div>}
     <nav aria-label="Main">
-      <div className="logo"><span className="logo-globe" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span>Land<i>Stack</i></div>
+      <div className="logo"><span className="logo-globe"><img src={appLogo} alt="" /></span>Land<i>Stack</i></div>
       {NAV[S.role].map(([k,l])=>{
         const isActive=activeSection===k||(k===S.view);
         const subTabs=SECTIONS[S.role]&&SECTIONS[S.role][k];

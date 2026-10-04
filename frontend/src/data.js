@@ -239,7 +239,7 @@ export const init = () => ({
     sellId: null,
     mine: [],
     parcels: [],
-    vis: { owner: 'Masked', phone: 'Hidden', price: 'Public', address: 'On consent' },
+    vis: { owner: 'Masked', price: 'Public', area: 'Public', zoning: 'Public', mortgage: 'On consent' },
     apps: [],
     notes: [],
     prof: {},

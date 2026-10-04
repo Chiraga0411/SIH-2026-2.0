@@ -2,6 +2,7 @@ import Globe from './Globe.jsx';import TrackBox from './Track.jsx';
 import {useState,useRef,useEffect} from 'react';
 import * as API from './api.js';
 import './Login.css';
+import appLogo from './assets/landstack-logo.png';
 
 /* ---------- text (English / Hindi) ---------- */
 const TXT={
@@ -135,7 +136,7 @@ export function Login({u,lang:extLang,setLang:extSet}){
           .map(([x,y,w,h],i)=><rect key={i} x={x} y={y} width={w} height={h} rx="4" fill={i%4===0?'rgba(94,168,255,.07)':'none'} stroke="rgba(94,168,255,.14)" strokeWidth="1.5"/>)}
         <circle cx="300" cy="420" r="6" fill="#5EA8FF"/><circle cx="300" cy="420" r="22" fill="none" stroke="#5EA8FF" strokeOpacity=".5"/>
       </svg>
-      <div className="ls-brand"><span className="ls-mark"><IcGlobe width="22" height="22"/></span><span>Land<i>Stack</i></span></div>
+      <div className="ls-brand"><span className="ls-mark"><img src={appLogo} alt="" /></span><span>Land<i>Stack</i></span></div>
       <div>
         <span className="ls-eyebrow"><IcShield width="15" height="15"/>{t.badge}</span>
         <h1>{t.hA}<br/><em>{t.hB}</em> {t.hC}</h1>
