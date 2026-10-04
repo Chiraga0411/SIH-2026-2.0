@@ -40,5 +40,5 @@ export function ChatPage({S,u,ask}){return <>
   <Head eb="Answers from records" title="Assistant" sub="Ask about any plot. Answers come from verified records, with sources."><Btn v="g" s onClick={()=>u({msgs:[S.msgs[0]]})}>Clear chat</Btn></Head>
   <div className="card chatbox"><div className="chh"><i className="av">L</i><div><b>Land Stack assistant</b><div className="mut small">Answers from records only · not legal advice</div></div></div><ChatBody S={S} u={u} ask={ask} full/></div></>}
 export function ChatWidget({S,u,ask}){if(S.view==='chat')return null;return <>
-  <button className="chatb glass" aria-label="Ask Land Stack" onClick={()=>u({chatOpen:!S.chatOpen})}>{S.chatOpen?'Close':'Ask'}</button>
+  <div className={`chat-launcher${S.chatOpen?' open':''}`}>{!S.chatOpen&&<div className="bot-peek" aria-hidden="true"><span className="peek-ring"/><img src={botPortrait} alt=""/></div>}<button className="chatb glass" aria-label="Ask Land Stack" onClick={()=>u({chatOpen:!S.chatOpen})}><span className="chatb-dot"/>{S.chatOpen?'Close':'Ask'}</button></div>
   {S.chatOpen&&<div className="chatp glass"><ChatBody S={S} u={u} ask={ask}/></div>}</>}
