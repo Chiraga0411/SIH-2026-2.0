@@ -1,0 +1,22 @@
+const express = require("express");
+const auth = require("../middleware/auth");
+const roleGuard = require("../middleware/roleGuard");
+const alerts = require("../controllers/alertController");
+const services = require("../controllers/serviceController");
+const audit = require("../controllers/auditController");
+const conflicts = require("../controllers/conflictController");
+const { rateLimit } = require("express-rate-limit");
+const skip = () => process.env.DISABLE_RATE_LIMIT === "1" && process.env.NODE_ENV !== "production";
+const trackLimit = rateLimit({ windowMs: 60 * 1000, limit: 30, standardHeaders: "draft-7", legacyHeaders: false, message: { message: "Too many requests. Please slow down." }, skip });
+const router = express.Router();
+router.get("/alerts", auth, roleGuard("officer", "planner", "registrar", "auditor", "admin"), alerts.getAlerts);
+router.get("/conflicts", auth, roleGuard("officer", "planner", "registrar", "auditor", "admin"), conflicts.getConflicts);
+router.get("/audit-log", auth, roleGuard("admin", "auditor"), audit.getAuditLog);
+router.get("/services", auth, services.listServices);
+router.get("/services/:id", auth, services.getServiceResult);
+router.post("/service-requests", auth, services.createServiceRequest);
+router.get("/service-requests/track", trackLimit, services.trackRequest); // public, before /:id
+router.get("/service-requests", auth, services.listServiceRequests);
+router.patch("/service-requests/:id", auth, roleGuard("officer", "admin", "registrar", "planner"), services.updateServiceRequest);
+router.get("/service-requests/:id/certificate", auth, services.getCertificate);
+module.exports = router;
